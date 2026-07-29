@@ -103,7 +103,7 @@
         /* Fixed Logos in Top Corners */
         .logo-left, .logo-right {
             position: fixed;
-            top: 45px; /* Pulled up closer to the nav bar */
+            top: 45px;
             width: 280px; 
             height: auto;
             opacity: 0.4; 
@@ -129,9 +129,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 160px 10% 100px; /* Increased top padding to push content away from logos */
+            padding: 120px 10% 100px; /* Standard padding for all sections */
             box-sizing: border-box;
             position: relative;
+        }
+        
+        #home {
+            padding-top: 280px; /* Specific padding just for the Home section to clear the logos */
         }
 
         .content-container {
@@ -284,6 +288,7 @@
             p { font-size: 1rem; }
             .image-container, .audio-container { height: 400px; width: 100%; }
             .logo-left, .logo-right { display: none; }
+            #home { padding-top: 120px; } /* Reset padding for mobile since logos are hidden */
         }
     </style>
 </head>
