@@ -23,7 +23,7 @@
             overflow-x: hidden;
         }
 
-        /* Navigation Menu */
+        /* Navigation Menu - Scaled Down */
         nav {
             position: fixed;
             top: 0;
@@ -33,7 +33,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 25px 0;
+            padding: 10px 0; 
             z-index: 1000;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -41,8 +41,8 @@
         nav a {
             color: var(--text-main);
             text-decoration: none;
-            margin: 0 20px;
-            font-size: 1.35rem;
+            margin: 0 12px; 
+            font-size: 0.85rem; 
             letter-spacing: 1px;
             text-transform: uppercase;
             transition: color 0.3s ease;
@@ -56,11 +56,11 @@
         .dropdown {
             position: relative;
             display: inline-block;
-            margin: 0 20px;
+            margin: 0 12px;
         }
 
         .dropdown a.dropbtn {
-            margin: 0; /* Removing extra margin so container handles spacing */
+            margin: 0; 
             cursor: pointer;
         }
 
@@ -68,7 +68,7 @@
             display: none;
             position: absolute;
             background-color: rgba(0, 0, 0, 0.95);
-            min-width: 300px;
+            min-width: 200px; 
             box-shadow: 0px 8px 20px rgba(0,0,0,0.9);
             z-index: 1001;
             top: 150%;
@@ -81,10 +81,10 @@
 
         .dropdown-content a {
             color: var(--text-main);
-            padding: 15px 20px;
+            padding: 10px 15px; 
             text-decoration: none;
             display: block;
-            font-size: 1.1rem;
+            font-size: 0.8rem; 
             margin: 0;
             text-align: center;
             text-transform: uppercase;
@@ -103,14 +103,14 @@
         /* Fixed Logos in Top Corners */
         .logo-left, .logo-right {
             position: fixed;
-            top: 100px; /* Positions it just below the nav bar */
-            width: 280px; /* Reduced by 50% from 560px */
+            top: 45px; /* Pulled up closer to the nav bar */
+            width: 280px; 
             height: auto;
-            opacity: 0.4; /* Translucent starting point */
+            opacity: 0.4; 
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
             z-index: 990;
-            pointer-events: none; /* Prevents logos from blocking clicks on elements beneath them */
-            will-change: transform, opacity; /* Optimizes JS animation */
+            pointer-events: none; 
+            will-change: transform, opacity; 
         }
 
         .logo-left {
@@ -129,7 +129,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 120px 10%;
+            padding: 160px 10% 100px; /* Increased top padding to push content away from logos */
             box-sizing: border-box;
             position: relative;
         }
@@ -153,18 +153,18 @@
             flex: 1;
         }
 
-        /* Typography */
+        /* Typography - Reduced Size */
         h1, h2, h3 {
             font-weight: 300;
             letter-spacing: 2px;
             margin-bottom: 25px;
         }
 
-        h1 { font-size: 4.5rem; }
-        h2 { font-size: 3.75rem; color: var(--accent-gold); }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; color: var(--accent-gold); }
         
         p {
-            font-size: 1.65rem;
+            font-size: 1.05rem;
             line-height: 1.8;
             color: var(--text-muted);
             margin-bottom: 25px;
@@ -206,7 +206,7 @@
         }
 
         .audio-container h3 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: var(--accent-gold);
             margin-bottom: 30px;
             font-weight: 300;
@@ -230,18 +230,18 @@
         .contact-form {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
             width: 100%;
             margin-top: 30px;
         }
 
         .contact-form input, .contact-form textarea {
             width: 100%;
-            padding: 20px;
+            padding: 15px;
             background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(212, 175, 55, 0.3);
             color: var(--text-main);
-            font-size: 1.35rem;
+            font-size: 1.05rem;
             border-radius: 4px;
             box-sizing: border-box;
             font-family: inherit;
@@ -255,11 +255,11 @@
         }
 
         .contact-form button {
-            padding: 20px;
+            padding: 15px;
             background: transparent;
             color: var(--accent-gold);
             border: 2px solid var(--accent-gold);
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
@@ -277,13 +277,13 @@
             .content-container, section:nth-child(even) .content-container {
                 flex-direction: column;
             }
-            nav { flex-wrap: wrap; padding: 15px; }
-            nav a, .dropdown { margin: 10px; font-size: 1.1rem; }
-            h1 { font-size: 3rem; }
-            h2 { font-size: 2.5rem; }
-            p { font-size: 1.25rem; }
+            nav { flex-wrap: wrap; padding: 10px; }
+            nav a, .dropdown { margin: 8px; font-size: 0.8rem; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            p { font-size: 1rem; }
             .image-container, .audio-container { height: 400px; width: 100%; }
-            .logo-left, .logo-right { display: none; /* Hides logos on smaller screens */ }
+            .logo-left, .logo-right { display: none; }
         }
     </style>
 </head>
@@ -310,7 +310,7 @@
         <a href="#contact">Contact</a>
     </nav>
 
-    <!-- Translucent Logos in Top Corners (Added logo-fade class for JS logic) -->
+    <!-- Translucent Logos in Top Corners -->
     <img class="logo-left logo-fade" src="RizvanovCustomSilver.png" alt="Rizvanov Custom Silver Logo">
     <img class="logo-right logo-fade" src="RizvanovTechnologyLogo.png" alt="Rizvanov Technology Logo">
 
@@ -459,9 +459,7 @@
                 // Logos Fade/Shrink Logic
                 const fadeLogos = document.querySelectorAll('.logo-fade');
                 fadeLogos.forEach(logo => {
-                    // Start scale at 1.0, shrink down to 0.5
                     let logoScale = Math.max(0.5, 1.0 - (homeProgress * 0.8));
-                    // Start opacity at 0.4, fade to 0
                     let logoOpacity = Math.max(0, 0.4 - (homeProgress * 1.5));
                     
                     logo.style.transform = `scale(${logoScale})`;
