@@ -32,6 +32,7 @@
             backdrop-filter: blur(10px);
             display: flex;
             justify-content: center;
+            align-items: center;
             padding: 25px 0;
             z-index: 1000;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -51,24 +52,75 @@
             color: var(--accent-gold);
         }
 
+        /* Dropdown Navigation Setup */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .dropdown a.dropbtn {
+            margin: 0; /* Removing extra margin so container handles spacing */
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.95);
+            min-width: 300px;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.9);
+            z-index: 1001;
+            top: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: var(--text-main);
+            padding: 15px 20px;
+            text-decoration: none;
+            display: block;
+            font-size: 1.1rem;
+            margin: 0;
+            text-align: center;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
         /* Fixed Logos in Top Corners */
         .logo-left, .logo-right {
             position: fixed;
             top: 100px; /* Positions it just below the nav bar */
-            width: 560px; /* Enlarged size */
+            width: 280px; /* Reduced by 50% from 560px */
             height: auto;
-            opacity: 0.4; /* Increased translucency (was 0.85) */
+            opacity: 0.4; /* Translucent starting point */
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
             z-index: 990;
             pointer-events: none; /* Prevents logos from blocking clicks on elements beneath them */
+            will-change: transform, opacity; /* Optimizes JS animation */
         }
 
         .logo-left {
             left: 40px;
+            transform-origin: top left;
         }
 
         .logo-right {
             right: 40px;
+            transform-origin: top right;
         }
 
         /* Section Layouts */
@@ -226,7 +278,7 @@
                 flex-direction: column;
             }
             nav { flex-wrap: wrap; padding: 15px; }
-            nav a { margin: 10px; font-size: 1.1rem; }
+            nav a, .dropdown { margin: 10px; font-size: 1.1rem; }
             h1 { font-size: 3rem; }
             h2 { font-size: 2.5rem; }
             p { font-size: 1.25rem; }
@@ -246,12 +298,21 @@
         <a href="#jewelry">Jewelry</a>
         <a href="#pcb">PCB Design</a>
         <a href="#repair">Repair Tech</a>
+        
+        <!-- Tools Dropdown -->
+        <div class="dropdown">
+            <a class="dropbtn">Tools</a>
+            <div class="dropdown-content">
+                <a href="https://www.rizvanovcreation.com/artist-diagnostic-suite/">Artist Diagnostic Suite</a>
+            </div>
+        </div>
+
         <a href="#contact">Contact</a>
     </nav>
 
-    <!-- Translucent Logos in Top Corners -->
-    <img class="logo-left" src="RizvanovCustomSilver.png" alt="Rizvanov Custom Silver Logo">
-    <img class="logo-right" src="RizvanovTechnologyLogo.png" alt="Rizvanov Technology Logo">
+    <!-- Translucent Logos in Top Corners (Added logo-fade class for JS logic) -->
+    <img class="logo-left logo-fade" src="RizvanovCustomSilver.png" alt="Rizvanov Custom Silver Logo">
+    <img class="logo-right logo-fade" src="RizvanovTechnologyLogo.png" alt="Rizvanov Technology Logo">
 
     <!-- Home Section -->
     <section id="home">
@@ -342,7 +403,7 @@
                 <p>Anton is a fully certified repair technician for Apple, Samsung, and Google devices. Utilizing micro-soldering, precision teardowns, and deep diagnostic software, he restores advanced consumer electronics to factory-perfect conditions. Fast turnarounds and uncompromising standards define his workbench.</p>
             </div>
             <div class="image-container">
-                <img class="dynamic-img" src="RepairTech.jpg" alt="Repair technician workspace">
+                <img class="dynamic-img" src="RepairTech.png" alt="Repair technician workspace">
             </div>
         </div>
     </section>
@@ -381,19 +442,31 @@
                 const scrollY = window.scrollY;
                 const vh = window.innerHeight;
 
+                const homeSection = document.getElementById('home');
+                const homeRect = homeSection.getBoundingClientRect();
+                let homeProgress = Math.max(0, -homeRect.top / (vh * 0.8)); 
+
                 // Background Image Logic
                 const bgImg = document.getElementById('bg-img');
                 if (bgImg) {
-                    const homeSection = document.getElementById('home');
-                    const homeRect = homeSection.getBoundingClientRect();
-                    
-                    let homeProgress = Math.max(0, -homeRect.top / (vh * 0.8)); 
                     let bgScale = Math.max(0.5, 1.3 - (homeProgress * 0.8));
                     let bgOpacity = Math.max(0, 1 - (homeProgress * 1.5));
                     
                     bgImg.style.transform = `scale(${bgScale})`;
                     bgImg.style.opacity = bgOpacity;
                 }
+
+                // Logos Fade/Shrink Logic
+                const fadeLogos = document.querySelectorAll('.logo-fade');
+                fadeLogos.forEach(logo => {
+                    // Start scale at 1.0, shrink down to 0.5
+                    let logoScale = Math.max(0.5, 1.0 - (homeProgress * 0.8));
+                    // Start opacity at 0.4, fade to 0
+                    let logoOpacity = Math.max(0, 0.4 - (homeProgress * 1.5));
+                    
+                    logo.style.transform = `scale(${logoScale})`;
+                    logo.style.opacity = logoOpacity;
+                });
 
                 // Dynamic Gallery Images Logic
                 const dynamicImages = document.querySelectorAll('.dynamic-img');
