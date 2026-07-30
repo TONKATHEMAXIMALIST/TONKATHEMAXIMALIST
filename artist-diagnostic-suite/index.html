@@ -432,7 +432,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/browser-id3-writer@6.0.0/dist/browser-id3-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/browser-id3-writer@4.4.0/dist/browser-id3-writer.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 /* ============ Rizvanov Technology — Artist Diagnostic Suite ============ */
@@ -1450,19 +1450,22 @@ async function handleFiles(files,mode){ const arr=[...files].filter(f=>/\.mp3$/i
     renderCheckResults(); }
   else { assignFiles=arr; assignData=[]; for(const f of arr){ const tags=await readTags(f); assignData.push({file:f, values:mapFoundTags(tags)}); } renderAssign(); }
 }
+function frameData(t,name){ const f=t&&t[name]; if(!f)return null; const d=(f.data!==undefined)?f.data:f; return (d&&typeof d==='object')?(d.text||d.lyrics||d.data||null):d; }
 function mapFoundTags(t){ const v={}; if(!t||t.error) return v;
-  const map={trackTitle:'title',primaryArtist:'artist',releaseTitle:'album',albumArtist:'TPE2',genre:'genre',trackNumber:'track',releaseDate:'year',composer:'TCOM',lyrics:'lyrics',comment:'comment'};
-  if(t.title)v.trackTitle=t.title; if(t.artist)v.primaryArtist=t.artist; if(t.album)v.releaseTitle=t.album; if(t.genre)v.genre=t.genre;
-  if(t.track)v.trackNumber=t.track; if(t.year)v.releaseDate=t.year;
-  // raw frames
-  const raw=t; const fr=(t && t.TSRC)?t.TSRC.data:null; if(fr)v.isrc=fr;
-  if(t.TCOM&&t.TCOM.data)v.songwriter=t.TCOM.data; if(t.TPE2&&t.TPE2.data)v.albumArtist=t.TPE2.data;
-  if(t.TPUB&&t.TPUB.data)v.publisher=t.TPUB.data; if(t.TBPM&&t.TBPM.data)v.bpm=t.TBPM.data; if(t.TKEY&&t.TKEY.data)v.key=t.TKEY.data;
-  if(t.TLAN&&t.TLAN.data)v.language=t.TLAN.data; if(t.TCOP&&t.TCOP.data)v.cLine=t.TCOP.data;
-  if(t.USLT&&t.USLT.data&&t.USLT.data.lyrics)v.lyrics=t.USLT.data.lyrics;
-  // TXXX user frames (may be array)
-  const txxx=t.TXXX; if(txxx){ const list=Array.isArray(txxx)?txxx:[txxx]; list.forEach(x=>{ if(x&&x.data){ const d=x.data.user_description||x.data.description; const val=x.data.data||x.data.value;
-    const mf=METAFIELDS.find(f=>f.id3_txxx&&(f.id3_txxx.toLowerCase()===(d||'').toLowerCase())); if(mf&&val)v[mf.k]=val; } }); }
+  // convenience fields jsmediatags exposes
+  if(t.title)v.trackTitle=t.title; if(t.artist)v.primaryArtist=t.artist; if(t.album)v.releaseTitle=t.album;
+  if(t.genre)v.genre=t.genre; if(t.track)v.trackNumber=t.track; if(t.year)v.releaseDate=t.year;
+  // raw ID3 text frames (v2.3 + v2.4)
+  const g=(names,key)=>{ for(const n of names){ const d=frameData(t,n); if(d){ v[key]=v[key]||d; break; } } };
+  g(['TIT2'],'trackTitle'); g(['TIT3'],'versionTitle'); g(['TPE1'],'primaryArtist'); g(['TPE2'],'albumArtist');
+  g(['TALB'],'releaseTitle'); g(['TRCK'],'trackNumber'); g(['TPOS'],'discNumber'); g(['TCON'],'genre');
+  g(['TSRC'],'isrc'); g(['TCOM'],'songwriter'); g(['TEXT'],'lyricist'); g(['TPUB'],'publisher');
+  g(['TBPM'],'bpm'); g(['TKEY'],'key'); g(['TLAN'],'language'); g(['TCOP'],'cLine'); g(['TPE4'],'remixer'); g(['TENC'],'engineer');
+  g(['TYER','TDRC','TDAT'],'releaseDate');
+  const uslt=t.USLT&&t.USLT.data; if(uslt&&uslt.lyrics)v.lyrics=uslt.lyrics;
+  // TXXX user-defined frames (may be a single object or an array)
+  const txxx=t.TXXX; if(txxx){ const list=Array.isArray(txxx)?txxx:[txxx]; list.forEach(x=>{ const dd=x&&x.data?x.data:x; if(dd){ const desc=dd.user_description||dd.description||''; const val=dd.data||dd.value||dd.text;
+    const mf=METAFIELDS.find(f=>f.id3_txxx&&f.id3_txxx.toLowerCase()===desc.toLowerCase()); if(mf&&val)v[mf.k]=val; } }); }
   return v; }
 function renderCheckResults(){ let h='';
   checkerResults.forEach((r,i)=>{ const foundKeys=Object.keys(r.found);
