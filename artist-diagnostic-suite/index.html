@@ -284,6 +284,40 @@
   .cal-ev:hover{filter:brightness(1.15)}
   .cal-ev .t{font-size:10px;color:var(--silver)}
 
+  /* Metadata tool */
+  .meta-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .meta-tab{padding:9px 16px;border:1px solid var(--rule2);border-radius:10px;background:var(--panel);cursor:pointer;font-weight:700;font-size:13px;color:var(--ink)}
+  .meta-tab.active{background:linear-gradient(135deg,#fff,#cfcfd4);color:#000;border-color:#fff}
+  .mgroup{margin:18px 0 6px;font-size:12px;color:var(--silver);text-transform:uppercase;letter-spacing:.6px;font-weight:800;border-bottom:1px solid var(--rule);padding-bottom:6px}
+  .mfields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:720px){.mfields{grid-template-columns:1fr}}
+  .mfield label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin:0 0 5px;font-weight:600}
+  .qhelp{width:16px;height:16px;border-radius:50%;border:1px solid var(--silver2);color:var(--silver);font-size:11px;font-weight:800;
+    display:inline-flex;align-items:center;justify-content:center;cursor:help;position:relative;flex:0 0 auto}
+  .qhelp .tip{display:none;position:absolute;left:20px;top:-6px;z-index:20;width:260px;background:#000;border:1px solid var(--rule2);
+    border-radius:10px;padding:10px 12px;font-size:11.5px;color:var(--ink);font-weight:400;text-transform:none;letter-spacing:0;line-height:1.4;box-shadow:var(--shadow)}
+  .qhelp:hover .tip{display:block}
+  .qhelp .tip b{color:#fff}
+  .missing input,.missing textarea,.missing select{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(239,68,68,.25)}
+  .dropzone{border:2px dashed var(--rule2);border-radius:14px;padding:30px;text-align:center;color:var(--muted);cursor:pointer;background:var(--panel)}
+  .dropzone:hover,.dropzone.over{border-color:#fff;color:#fff;background:var(--panel3)}
+  .filecard{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .filecard h4{margin:0 0 8px;color:#fff;font-size:14px}
+  .metarow{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--rule)}
+  .metarow .k{color:var(--muted);min-width:150px}
+  .metarow .v{color:var(--ink);text-align:right;word-break:break-word}
+  .metarow.miss .v{color:var(--red);font-style:italic}
+  /* Client calendar availability */
+  .cal-cell.avail{cursor:pointer} .cal-cell.avail:hover{border-color:#fff;background:var(--panel3)}
+  .cal-cell.blocked{opacity:.45;cursor:not-allowed;background:#141414}
+  .cal-cell.blocked .cal-daynum{color:var(--red)}
+  .avail-pill{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--green);font-weight:800}
+  .blocked-pill{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--red);font-weight:800}
+  /* Progress */
+  .progitem{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule);font-size:13.5px}
+  .progitem input{width:auto;margin-top:2px}
+  .progitem.done .lbl{text-decoration:line-through;color:var(--muted2)}
+  .progitem .pill{margin-left:6px}
   @media print{
     body{background:#fff;color:#111}
     .topbar,.drawer,.scrim,.snap,.toolbar,.navrow,.hamb,.folders,.bulkbar{display:none!important}
@@ -368,6 +402,12 @@
     </div>
     <button class="navitem" data-nav="consult" onclick="nav('consult')"><span class="ic">&#9707;</span> Consult Statuses</button>
     <button class="navitem" data-nav="calendar" onclick="nav('calendar')"><span class="ic">&#128197;</span> Booking Calendar</button>
+    <button class="navitem caret" id="metaToggle" onclick="toggleMetaSub()"><span class="ic">&#9636;</span> Metadata <span class="ic-caret">&#8250;</span></button>
+    <div class="subnav" id="metaSub">
+      <button class="navitem" onclick="openMeta('creator')"><span class="ic">&#9998;</span> Metadata Creator</button>
+      <button class="navitem" onclick="openMeta('checker')"><span class="ic">&#9906;</span> Metadata Checker</button>
+      <button class="navitem" onclick="openMeta('assign')"><span class="ic">&#9881;</span> Metadata Assignment</button>
+    </div>
     <button class="navitem hidden" id="navMyAccount" data-nav="myaccount" onclick="nav('myaccount')"><span class="ic">&#9733;</span> My Account</button>
     <div style="flex:1"></div>
     <button class="navitem" onclick="doLogout()"><span class="ic">&#8618;</span> Sign out</button>
@@ -383,6 +423,7 @@
     <div id="view-diagnostic" class="view hidden"></div>
     <div id="view-consult" class="view hidden"></div>
     <div id="view-calendar" class="view hidden"></div>
+    <div id="view-metadata" class="view hidden"></div>
     <div id="view-myaccount" class="view hidden"></div>
   </div>
   <div class="emblem" id="emblemApp"></div>
@@ -390,6 +431,9 @@
 <div id="modalHost"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/browser-id3-writer@6.0.0/dist/browser-id3-writer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 /* ============ Rizvanov Technology — Artist Diagnostic Suite ============ */
 const CONFIG = { SUPABASE_URL:"https://bzikvhvacgmzxrksvoty.supabase.co", SUPABASE_ANON_KEY:"sb_publishable_K2D3-b6j_OubMVgkJ3Qclg_JPYYD1ps" };
@@ -1127,14 +1171,15 @@ let currentView='home';
 function openDrawer(){ $('drawer').classList.add('open'); $('scrim').classList.add('open'); }
 function closeDrawer(){ $('drawer').classList.remove('open'); $('scrim').classList.remove('open'); }
 function toggleSubnav(){ $('diagSub').classList.toggle('open'); $('diagToggle').classList.toggle('open'); }
-function nav(view, keepDrawer){ currentView=view; ['home','diagnostic','consult','calendar','myaccount'].forEach(v=>$('view-'+v).classList.add('hidden'));
+function nav(view, keepDrawer){ currentView=view; ['home','diagnostic','consult','calendar','metadata','myaccount'].forEach(v=>$('view-'+v).classList.add('hidden'));
   $('view-'+view).classList.remove('hidden');
   document.querySelectorAll('.navitem[data-nav]').forEach(n=>n.classList.toggle('active', n.dataset.nav===view));
-  if(view==='home') renderHome(); if(view==='consult'){cSel.clear();renderConsult();} if(view==='calendar')renderCalendar(); if(view==='myaccount')renderMyAccount();
+  const client=!CURRENT.isAdmin;
+  if(view==='home') renderHome(); if(view==='consult'){cSel.clear(); client?renderProgress():renderConsult();} if(view==='calendar'){ client?renderClientCalendar():renderCalendar(); } if(view==='metadata')renderMetadata(); if(view==='myaccount')renderMyAccount();
   if(!keepDrawer) closeDrawer(); window.scrollTo({top:0,behavior:'smooth'}); }
 async function enterApp(){ invalidate(); await ensureData(true); $('screen-auth').classList.add('hidden'); $('screen-app').classList.remove('hidden');
   $('uchipName').textContent=CURRENT.username; $('uchipAv').textContent=(CURRENT.username[0]||'?').toUpperCase();
-  $('uchipAdmin').classList.toggle('hidden', !CURRENT.isAdmin); $('navMyAccount').classList.toggle('hidden', !CURRENT.isAdmin); nav('home'); }
+  $('uchipAdmin').classList.toggle('hidden', !CURRENT.isAdmin); applyRole(); nav(CURRENT.isAdmin?'home':'consult'); }
 async function doLogout(){ if(USING_SUPABASE){ try{ await sb.auth.signOut(); }catch(e){} } CURRENT=null; invalidate(); closeDrawer();
   $('screen-app').classList.add('hidden'); $('screen-auth').classList.remove('hidden'); $('li-user').value=''; $('li-pass').value=''; setMsg('loginMsg',''); }
 function emblemHTML(){ return `<img src="${LOGO_SRC}" alt="Rizvanov Technology"><span>&copy;&nbsp;&trade;&nbsp;2026 <b>Rizvanov Technology LLC</b>. All Rights Reserved.</span>`; }
@@ -1142,6 +1187,337 @@ function initApp(){ $('emblemAuth').innerHTML=emblemHTML(); $('emblemApp').inner
   $('modeWarn').textContent = USING_SUPABASE ? "Secure cloud mode — accounts sync across devices." : "Offline demo mode — data is stored in this browser only."; }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); if(e.key==='Enter' && !$('screen-auth').classList.contains('hidden')){ const a=document.activeElement; if(a&&(a.id==='li-user'||a.id==='li-pass')) doLogin(); }});
 initApp();
+
+/* ===================== ROLE GATING ===================== */
+function applyRole(){ const admin=CURRENT.isAdmin;
+  const home=document.querySelector('.navitem[data-nav="home"]');
+  const consult=document.querySelector('.navitem[data-nav="consult"]');
+  const cal=document.querySelector('.navitem[data-nav="calendar"]');
+  if(home) home.classList.toggle('hidden', !admin);
+  $('navMyAccount').classList.toggle('hidden', !admin);
+  if(consult) consult.innerHTML = admin? '<span class="ic">&#9707;</span> Consult Statuses' : '<span class="ic">&#9707;</span> Progress';
+  if(cal) cal.innerHTML = admin? '<span class="ic">&#128197;</span> Booking Calendar' : '<span class="ic">&#128197;</span> Book a Consult';
+}
+function toggleMetaSub(){ $('metaSub').classList.toggle('open'); $('metaToggle').classList.toggle('open'); }
+let metaTool='creator';
+function openMeta(tool){ metaTool=tool; closeDrawer(); nav('metadata'); }
+
+/* ===================== CLIENT: BOOK A CONSULT (availability calendar) ===================== */
+let ccalRef=new Date();
+function renderClientCalendar(){ const y=ccalRef.getFullYear(), m=ccalRef.getMonth();
+  const first=new Date(y,m,1), start=new Date(first); start.setDate(1-((first.getDay()+6)%7));
+  const monthName=ccalRef.toLocaleString([], {month:'long',year:'numeric'});
+  const mine=(ENTRIES||[]).filter(e=>!e.trashed&&e.scheduledAt);
+  const dk=d=>`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  const booked={}; mine.forEach(e=>{ booked[dk(new Date(e.scheduledAt))]=true; });
+  const today=new Date(); today.setHours(0,0,0,0);
+  let cells=''; const cur=new Date(start);
+  for(let i=0;i<42;i++){ const inM=cur.getMonth()===m; const past=cur<today; const isBooked=booked[dk(cur)];
+    const dstr=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`;
+    const blocked=past||isBooked;
+    cells+=`<div class="cal-cell ${inM?'':'oth'} ${blocked?'blocked':'avail'}" ${blocked?'':`onclick="clientPick('${dstr}')"`}>
+      <div class="cal-daynum">${cur.getDate()}</div>${!inM?'':(blocked? `<span class="blocked-pill">${past?'—':'Requested'}</span>`:'<span class="avail-pill">Available</span>')}</div>`;
+    cur.setDate(cur.getDate()+1); }
+  const dows=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  $('view-calendar').innerHTML=`<div class="page-h"><span class="barp"></span><h2>Book a Consultation</h2></div>
+    <p class="page-sub">Pick an available day to request a consultation. You'll receive confirmation by email.</p>
+    <div class="card"><div class="card-pad">
+      <div class="cal-head"><button class="btn ghost tiny" onclick="ccalStep(-1)">&larr;</button><h3>${monthName}</h3><button class="btn ghost tiny" onclick="ccalStep(1)">&rarr;</button><button class="btn ghost tiny" onclick="ccalRef=new Date();renderClientCalendar()">Today</button></div>
+      <div class="cal-grid">${dows}${cells}</div>
+      <p style="color:var(--muted);font-size:12px;margin-top:12px">Grey days are unavailable. Click a highlighted day to request that date.</p>
+    </div></div>`; }
+function ccalStep(n){ ccalRef=new Date(ccalRef.getFullYear(),ccalRef.getMonth()+n,1); renderClientCalendar(); }
+function clientPick(dstr){ $('modalHost').innerHTML=`<div class="modal-scrim" onclick="if(event.target===this)closeModal()"><div class="modal">
+    <div class="mhead"><h3>Request consultation — ${dstr}</h3><button class="xbtn" onclick="closeModal()">&times;</button></div>
+    <div class="mbody">
+      <div class="mrow"><div><label class="fl">First and Last Name</label><input id="cb-name" placeholder="Your full name"></div>
+        <div><label class="fl">Email address</label><input id="cb-email" type="email" placeholder="you@example.com"></div></div>
+      <div class="mrow"><div><label class="fl">Appointment date</label><input type="date" id="cb-date" value="${dstr}"></div>
+        <div><label class="fl">Time</label><input type="time" id="cb-time" value="10:00"></div></div>
+      <div class="fldg"><label class="fl">Brief description / notes</label><textarea id="cb-notes" placeholder="What would you like to cover?"></textarea></div>
+      <div id="cb-msg"></div>
+    </div>
+    <div class="mfoot"><div></div><div style="display:flex;gap:8px"><button class="btn ghost sm" onclick="closeModal()">Cancel</button><button class="btn primary sm" onclick="submitClientBooking()">Request consultation</button></div></div>
+  </div></div>`; }
+async function submitClientBooking(){ const name=$('cb-name').value.trim(), email=$('cb-email').value.trim(), d=$('cb-date').value, t=$('cb-time').value, notes=$('cb-notes').value.trim();
+  if(!name||!email||!d){ $('cb-msg').innerHTML=`<div class="msg err">Name, email, and date are required.</div>`; return; }
+  const iso=new Date(`${d}T${t||'10:00'}`).toISOString();
+  try{ await STORE.createEntry({artist:name, project:'Consultation Request', projectType:'Single', song:'Booking', scheduledAt:iso,
+      notes:`Email: ${email}\n${notes}`, flagged:true }); }catch(e){ $('cb-msg').innerHTML=`<div class="msg err">${e.message}</div>`; return; }
+  invalidate(); await ensureData(true); closeModal(); renderClientCalendar();
+  alert('Consultation requested for '+d+'. You will receive a confirmation by email.'); }
+
+/* ===================== CLIENT: PROGRESS ===================== */
+async function renderProgress(){ const {entries}=await ensureData(); const rows=entries.filter(e=>!e.trashed&&(e.financialReport||e.legalReport));
+  let html=`<div class="page-h"><span class="barp"></span><h2>My Progress</h2></div>
+    <p class="page-sub">Track your two diagnostics. Check off each action as you complete it — your coverage rises toward 100%.</p>`;
+  if(!rows.length){ html+=`<div class="card"><div class="card-pad"><div class="empty"><div class="big">&#9673;</div>
+    <div style="font-size:18px;color:var(--ink);font-weight:700;margin-bottom:4px">No diagnostics yet</div>
+    <div>Run a Financial and a Legal/IP diagnostic to start tracking your progress.</div>
+    <div style="margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn primary" onclick="startDiagnostic('financial')">Financial Diagnostic</button><button class="btn ghost" onclick="startDiagnostic('legal')">Legal / IP Diagnostic</button></div></div></div></div>`;
+    $('view-consult').innerHTML=html; return; }
+  rows.forEach(e=>{ html+=`<div class="card" style="margin-bottom:14px"><div class="card-pad">
+    <div class="page-h" style="margin-bottom:8px"><h2 style="font-size:18px">${escapeHtml(e.artist)} — ${escapeHtml(e.song||e.project)}</h2></div>`;
+    ['financial','legal'].forEach(type=>{ const rep=type==='financial'?e.financialReport:e.legalReport; if(!rep)return;
+      const steps=rep.todo||[]; const done=rep.done||[]; const base=(type==='financial'?e.financialCoverage:e.legalCoverage)||0;
+      const frac=steps.length? done.length/steps.length : 1; const live=Math.round(base+(100-base)*frac);
+      html+=`<div class="section-h"><span class="bar"></span><h3 style="font-size:15px">${type==='financial'?'Revenue Coverage':'Rights Protection'} — <span class="cov ${covClass(live)}">${live}%</span> <span style="color:var(--muted);font-size:12px;font-weight:500">(${done.length}/${steps.length} done)</span></h3></div>`;
+      if(!steps.length){ html+=`<p style="color:var(--muted);font-size:13px">Nothing outstanding — fully covered.</p>`; }
+      steps.forEach((t,i)=>{ const isDone=done.includes(i); html+=`<div class="progitem ${isDone?'done':''}"><input type="checkbox" ${isDone?'checked':''} onchange="toggleStep('${e.id}','${type}',${i},this.checked)">
+        <div class="lbl"><b>${escapeHtml(t.title)}</b> <span class="pill ${t.prio}">${t.prio}</span><div style="color:var(--muted);font-size:12px;margin-top:2px">${escapeHtml(t.org)} &middot; ${escapeHtml(t.cost)}</div></div></div>`; });
+    });
+    html+=`</div></div>`; });
+  $('view-consult').innerHTML=html; }
+async function toggleStep(id,type,idx,on){ const {entries}=await ensureData(); const e=entries.find(x=>x.id===id); if(!e)return;
+  const rep=type==='financial'?e.financialReport:e.legalReport; rep.done=rep.done||[]; const s=new Set(rep.done);
+  if(on)s.add(idx); else s.delete(idx); rep.done=[...s];
+  const patch=type==='financial'?{financialReport:rep}:{legalReport:rep};
+  try{ await STORE.updateEntry(id,patch); }catch(err){ alert(err.message); }
+  invalidate(); await ensureData(true); renderProgress(); }
+
+/* ===================== METADATA FIELD TAXONOMY ===================== */
+const METAFIELDS=[
+ // Core recording
+ {k:'trackTitle',label:'Track Title',group:'Core Recording',lvl:'track',id3:'TIT2',help:'<b>What:</b> The song’s exact title as it should appear on DSPs. <b>Where:</b> Your final master/session; keep casing and punctuation consistent everywhere.'},
+ {k:'versionTitle',label:'Version / Subtitle',group:'Core Recording',lvl:'track',id3:'TIT3',help:'<b>What:</b> Version info such as “Radio Edit”, “Remix”, “Live”, “Acoustic”. <b>Where:</b> Only if this differs from the original; leave blank for the standard version.'},
+ {k:'trackNumber',label:'Track Number',group:'Core Recording',lvl:'track',id3:'TRCK',help:'<b>What:</b> Position of this track in the release (1 for a single). <b>Where:</b> Your sequenced tracklist.'},
+ {k:'discNumber',label:'Disc / Volume Number',group:'Core Recording',lvl:'track',id3:'TPOS',help:'<b>What:</b> Which disc/volume this track belongs to (1 unless a multi-disc album). <b>Where:</b> Your release plan.'},
+ {k:'duration',label:'Duration (mm:ss)',group:'Core Recording',lvl:'track',help:'<b>What:</b> Exact running time of the recording. <b>Where:</b> Your DAW or audio player readout of the final master.'},
+ {k:'explicit',label:'Explicit / Clean',group:'Core Recording',lvl:'track',help:'<b>What:</b> Parental-advisory flag: Explicit, Clean, or Not Explicit. <b>Where:</b> Based on lyric content — any profanity/sensitive content = Explicit; a radio-safe version = Clean.'},
+ // Contributors
+ {k:'primaryArtist',label:'Primary Artist(s)',group:'Contributors & Credits',lvl:'track',id3:'TPE1',help:'<b>What:</b> The main performing artist(s). <b>Where:</b> Your artist name exactly as branded; separate multiple with a semicolon.'},
+ {k:'featuredArtist',label:'Featured Artist(s)',group:'Contributors & Credits',lvl:'track',id3_txxx:'FEATURED',help:'<b>What:</b> Guest artists (shown as “feat.”). <b>Where:</b> Anyone featured on the track; keep separate from primary artists.'},
+ {k:'remixer',label:'Remixer',group:'Contributors & Credits',lvl:'track',id3:'TPE4',help:'<b>What:</b> Who remixed/modified the recording. <b>Where:</b> Only for remix versions.'},
+ {k:'producer',label:'Producer(s)',group:'Contributors & Credits',lvl:'track',id3_txxx:'PRODUCER',help:'<b>What:</b> Who produced the track. <b>Where:</b> Your session credits — the person(s) who oversaw the recording/beat.'},
+ {k:'mixer',label:'Mixing Engineer',group:'Contributors & Credits',lvl:'track',id3_txxx:'MIXER',help:'<b>What:</b> Who mixed the track. <b>Where:</b> Your session/credits.'},
+ {k:'masterer',label:'Mastering Engineer',group:'Contributors & Credits',lvl:'track',id3_txxx:'MASTERING',help:'<b>What:</b> Who mastered the final audio. <b>Where:</b> Your mastering credit.'},
+ {k:'engineer',label:'Recording Engineer',group:'Contributors & Credits',lvl:'track',id3_txxx:'ENGINEER',help:'<b>What:</b> Who tracked/recorded the session. <b>Where:</b> Studio session notes.'},
+ {k:'musicians',label:'Performing Musicians',group:'Contributors & Credits',lvl:'track',id3_txxx:'MUSICIANS',help:'<b>What:</b> Instrumentalists/vocalists and their roles (e.g., “Jane Doe — bass”). <b>Where:</b> Session credits; important for neighboring-rights and role taxonomy.'},
+ // Composition & publishing
+ {k:'songwriter',label:'Songwriter(s) / Composer(s)',group:'Composition & Publishing',lvl:'track',id3:'TCOM',help:'<b>What:</b> Who wrote the music. <b>Where:</b> Your split sheet — must match PRO/MLC registrations.'},
+ {k:'lyricist',label:'Lyricist(s)',group:'Composition & Publishing',lvl:'track',id3:'TEXT',help:'<b>What:</b> Who wrote the lyrics. <b>Where:</b> Split sheet.'},
+ {k:'publisher',label:'Publisher(s)',group:'Composition & Publishing',lvl:'track',id3:'TPUB',help:'<b>What:</b> The publishing entity(ies) for the composition. <b>Where:</b> Your PRO/publishing admin; if self-published, your publishing entity name.'},
+ {k:'iswc',label:'ISWC',group:'Composition & Publishing',lvl:'track',id3_txxx:'ISWC',help:'<b>What:</b> International Standard Musical Work Code — identifies the composition. <b>Where:</b> Assigned by your PRO/The MLC when you register the work.'},
+ {k:'splits',label:'Writer Splits (%)',group:'Composition & Publishing',lvl:'track',id3_txxx:'SPLITS',help:'<b>What:</b> Each writer’s ownership percentage. <b>Where:</b> Your signed split sheet; must total 100%.'},
+ // Classification
+ {k:'genre',label:'Genre',group:'Classification',lvl:'track',id3:'TCON',help:'<b>What:</b> Primary genre for store categorization. <b>Where:</b> Pick the closest DSP genre; be accurate for playlist/algorithm matching.'},
+ {k:'subgenre',label:'Subgenre',group:'Classification',lvl:'track',id3_txxx:'SUBGENRE',help:'<b>What:</b> More specific style. <b>Where:</b> Optional; refine within your primary genre.'},
+ {k:'language',label:'Language (of lyrics)',group:'Classification',lvl:'track',id3:'TLAN',help:'<b>What:</b> The primary language sung. <b>Where:</b> “Instrumental” if no lyrics; helps DSP localization.'},
+ {k:'bpm',label:'BPM',group:'Classification',lvl:'track',id3:'TBPM',help:'<b>What:</b> Tempo in beats per minute. <b>Where:</b> Your DAW project tempo. Useful for sync/DJ metadata.'},
+ {k:'key',label:'Musical Key',group:'Classification',lvl:'track',id3:'TKEY',help:'<b>What:</b> Initial key (e.g., “A minor”). <b>Where:</b> Your project/analysis. Useful for sync.'},
+ {k:'mood',label:'Mood / Sync Keywords',group:'Classification',lvl:'track',id3_txxx:'MOOD',help:'<b>What:</b> Descriptive tags for sync searchability (e.g., “uplifting, cinematic”). <b>Where:</b> Your own description of the vibe.'},
+ // Rights & ownership
+ {k:'pLine',label:'℗ (P) Line',group:'Rights & Ownership',lvl:'track',id3_txxx:'PLINE',help:'<b>What:</b> Sound-recording copyright notice: “℗ [Year] [Owner]”. <b>Where:</b> Year of first release + the master owner (usually you/your label).'},
+ {k:'cLine',label:'© (C) Line',group:'Rights & Ownership',lvl:'release',id3:'TCOP',help:'<b>What:</b> Copyright notice for the release/artwork: “© [Year] [Owner]”. <b>Where:</b> Year + owning entity.'},
+ {k:'isrc',label:'ISRC',group:'Rights & Ownership',lvl:'track',id3:'TSRC',help:'<b>What:</b> International Standard Recording Code — unique per recording. <b>Where:</b> Auto-assigned by your distributor, or issue your own via your national ISRC agency. Never reuse across versions.'},
+ {k:'territory',label:'Territory Restrictions',group:'Rights & Ownership',lvl:'release',id3_txxx:'TERRITORY',help:'<b>What:</b> Where the release may/may not be sold. <b>Where:</b> “Worldwide” unless a deal restricts territories.'},
+ // Technical / audio
+ {k:'sampleRate',label:'Sample Rate',group:'Technical / Audio',lvl:'track',id3_txxx:'SAMPLERATE',help:'<b>What:</b> Audio sample rate (e.g., 44.1 kHz, 48 kHz). <b>Where:</b> Your export settings; DSPs prefer ≥44.1 kHz WAV.'},
+ {k:'bitDepth',label:'Bit Depth',group:'Technical / Audio',lvl:'track',id3_txxx:'BITDEPTH',help:'<b>What:</b> e.g., 16-bit or 24-bit. <b>Where:</b> Your master export settings.'},
+ {k:'immersive',label:'Dolby Atmos / Immersive',group:'Technical / Audio',lvl:'track',id3_txxx:'IMMERSIVE',help:'<b>What:</b> Whether a spatial-audio (Dolby Atmos) master exists. <b>Where:</b> Yes/No; Atmos needs a separate ADM BWF master and its own Dolby ISRC per track.'},
+ {k:'dolbyIsrc',label:'Dolby / Atmos ISRC',group:'Technical / Audio',lvl:'track',id3_txxx:'DOLBYISRC',help:'<b>What:</b> A separate ISRC for the Atmos version. <b>Where:</b> Assigned when you deliver the Atmos master.'},
+ // Lyrics
+ {k:'lyrics',label:'Lyrics (full text)',group:'Lyrics',lvl:'track',id3:'USLT',help:'<b>What:</b> The full written lyrics. <b>Where:</b> Your lyric sheet; used for lyric display and clean/explicit alignment.'},
+ {k:'lyricsSync',label:'Time-Synced Lyrics?',group:'Lyrics',lvl:'track',id3_txxx:'SYNCEDLYRICS',help:'<b>What:</b> Whether timestamped (karaoke-style) lyrics are provided. <b>Where:</b> Yes/No; increasingly important — delivered via a lyric provider.'},
+ {k:'lyricProvider',label:'Lyric Provider',group:'Lyrics',lvl:'track',id3_txxx:'LYRICPROVIDER',help:'<b>What:</b> Service handling lyric delivery (e.g., Musixmatch, LyricFind). <b>Where:</b> Your lyric-distribution setup.'},
+ // Release (product)
+ {k:'releaseTitle',label:'Release Title',group:'Release (Product)',lvl:'release',id3:'TALB',help:'<b>What:</b> The album/EP/single product title. <b>Where:</b> Matches store display; for a single, usually equals the track title.'},
+ {k:'albumArtist',label:'Release / Album Artist',group:'Release (Product)',lvl:'release',id3:'TPE2',help:'<b>What:</b> The overall billing artist for the product (the “album artist”). <b>Where:</b> Usually your main artist name; use “Various Artists” for compilations.'},
+ {k:'releaseType',label:'Release Type',group:'Release (Product)',lvl:'release',id3_txxx:'RELEASETYPE',help:'<b>What:</b> Single, EP, or Album. <b>Where:</b> By track count (1 / 2–6 / 7+), per DSP definitions.'},
+ {k:'releaseDate',label:'Release Date',group:'Release (Product)',lvl:'release',id3:'TYER',help:'<b>What:</b> Digital release date. <b>Where:</b> Your planned street date; set 3–4 weeks ahead for playlist pitching.'},
+ {k:'originalReleaseDate',label:'Original Release Date',group:'Release (Product)',lvl:'release',id3_txxx:'ORIGDATE',help:'<b>What:</b> First-ever release date (for reissues/catalog). <b>Where:</b> Only if this is a re-release of older material.'},
+ {k:'label',label:'Label Name',group:'Release (Product)',lvl:'release',id3_txxx:'LABEL',help:'<b>What:</b> The record label. <b>Where:</b> Your label; if independent, your own label/entity name.'},
+ {k:'imprint',label:'Imprint',group:'Release (Product)',lvl:'release',id3_txxx:'IMPRINT',help:'<b>What:</b> Sub-label/imprint under the main label. <b>Where:</b> Optional — only if you use one.'},
+ {k:'catalogNumber',label:'Catalog Number',group:'Release (Product)',lvl:'release',id3_txxx:'CATALOG',help:'<b>What:</b> Your label’s internal catalog reference. <b>Where:</b> You assign this (e.g., RIZ-001).'},
+ {k:'preOrderDate',label:'Pre-order / Preview Date',group:'Release (Product)',lvl:'release',id3_txxx:'PREORDER',help:'<b>What:</b> When pre-orders and preview clips become available. <b>Where:</b> Optional, before release date.'},
+ {k:'previewStart',label:'Preview Clip Start (s)',group:'Release (Product)',lvl:'track',id3_txxx:'PREVIEWSTART',help:'<b>What:</b> Start time (seconds) for the 30s preview clip. <b>Where:</b> Pick a hooky moment; optional — DSPs auto-pick if blank.'},
+ {k:'marketingGenre',label:'Marketing / Display Genre',group:'Release (Product)',lvl:'release',id3_txxx:'MKTGENRE',help:'<b>What:</b> Genre used for store merchandising. <b>Where:</b> Usually same as primary genre.'},
+ {k:'description',label:'Marketing Description',group:'Release (Product)',lvl:'release',id3_txxx:'DESCRIPTION',help:'<b>What:</b> Short marketing copy about the release. <b>Where:</b> Your own promo blurb.'},
+ // Artwork
+ {k:'artworkCredit',label:'Artwork Credit',group:'Artwork',lvl:'release',id3_txxx:'ARTWORKCREDIT',help:'<b>What:</b> Cover artist/photographer/designer. <b>Where:</b> Whoever made the cover — needed for clearances.'},
+ {k:'artworkCopyright',label:'Artwork Copyright / Clearance',group:'Artwork',lvl:'release',id3_txxx:'ARTWORKRIGHTS',help:'<b>What:</b> Rights/clearance status of the artwork. <b>Where:</b> Confirm you have rights to every image/photo used.'},
+ // Identifiers & delivery
+ {k:'upc',label:'UPC / EAN',group:'Identifiers & Delivery',lvl:'release',id3_txxx:'UPC',help:'<b>What:</b> Universal Product Code — unique per release. <b>Where:</b> Auto-assigned by your distributor, or bought from GS1.'},
+ {k:'grid',label:'GRid',group:'Identifiers & Delivery',lvl:'release',id3_txxx:'GRID',help:'<b>What:</b> Global Release Identifier (used in DDEX delivery). <b>Where:</b> Assigned by the distributor/DSP pipeline; optional for indies.'},
+ {k:'isni',label:'ISNI (Artist)',group:'Identifiers & Delivery',lvl:'release',id3_txxx:'ISNI',help:'<b>What:</b> International Standard Name Identifier for you as an artist. <b>Where:</b> Free via isni.org / your distributor; links your identity across platforms.'},
+ {k:'ipi',label:'IPI / CAE (Writer)',group:'Identifiers & Delivery',lvl:'track',id3_txxx:'IPI',help:'<b>What:</b> Interested Party Information number identifying you as a songwriter/publisher. <b>Where:</b> Issued by your PRO on affiliation.'},
+ {k:'spotifyUri',label:'Spotify Artist URI/ID',group:'Identifiers & Delivery',lvl:'release',id3_txxx:'SPOTIFYID',help:'<b>What:</b> Your Spotify artist identifier. <b>Where:</b> Spotify for Artists — ensures new releases land on your profile.'},
+ {k:'appleId',label:'Apple Artist ID',group:'Identifiers & Delivery',lvl:'release',id3_txxx:'APPLEID',help:'<b>What:</b> Your Apple Music artist identifier. <b>Where:</b> Apple Music for Artists.'}
+];
+const META_GROUPS=[...new Set(METAFIELDS.map(f=>f.group))];
+let metaData={}; // current creator values
+
+/* ===================== METADATA ROUTER ===================== */
+function renderMetadata(){ 
+  const tab=(t,l)=>`<div class="meta-tab ${metaTool===t?'active':''}" onclick="metaTool='${t}';renderMetadata()">${l}</div>`;
+  let head=`<div class="page-h"><span class="barp"></span><h2>Metadata Tools</h2></div>
+    <p class="page-sub">Create, check, and complete the full metadata for your music — the DDEX/ID3 fields DSPs and rights systems rely on.</p>
+    <div class="meta-tabs">${tab('creator','Creator')}${tab('checker','Checker')}${tab('assign','Assignment')}</div>`;
+  let body='';
+  if(metaTool==='creator') body=metaCreatorHTML();
+  else if(metaTool==='checker') body=metaCheckerHTML();
+  else body=metaAssignHTML();
+  $('view-metadata').innerHTML=head+`<div id="metaBody">${body}</div>`;
+  if(metaTool==='creator') restoreMetaInputs();
+}
+
+/* ---------- Metadata Creator ---------- */
+function metaCreatorHTML(){ let h=`<div class="card"><div class="card-pad">
+  <div class="toolbar-row"><div class="sel"><label>Output</label><select id="meta-out"><option value="ddex">DDEX XML feed</option><option value="csv">CSV / Excel spreadsheet</option></select></div>
+    <div style="flex:1"></div><button class="btn primary sm" onclick="exportMeta()">Generate &amp; Download</button><button class="btn ghost sm" onclick="clearMeta()">Clear</button></div>`;
+  META_GROUPS.forEach(g=>{ h+=`<div class="mgroup">${g}</div><div class="mfields">`;
+    METAFIELDS.filter(f=>f.group===g).forEach(f=>{ h+=`<div class="mfield"><label>${f.label}
+      <span class="qhelp">?<span class="tip">${f.help}</span></span></label>${metaInput(f)}</div>`; });
+    h+=`</div>`; });
+  h+=`</div></div>`; return h; }
+function metaInput(f){ if(f.k==='explicit') return `<select id="mf-${f.k}"><option value="">—</option><option>Not Explicit</option><option>Explicit</option><option>Clean</option></select>`;
+  if(f.k==='releaseType') return `<select id="mf-${f.k}"><option value="">—</option><option>Single</option><option>EP</option><option>Album</option></select>`;
+  if(f.k==='immersive'||f.k==='lyricsSync') return `<select id="mf-${f.k}"><option value="">—</option><option>Yes</option><option>No</option></select>`;
+  if(f.k==='lyrics'||f.k==='description'||f.k==='musicians') return `<textarea id="mf-${f.k}"></textarea>`;
+  return `<input id="mf-${f.k}">`; }
+function collectMeta(){ metaData={}; METAFIELDS.forEach(f=>{ const el=$('mf-'+f.k); if(el&&el.value.trim())metaData[f.k]=el.value.trim(); }); return metaData; }
+function restoreMetaInputs(){ METAFIELDS.forEach(f=>{ const el=$('mf-'+f.k); if(el&&metaData[f.k]!=null)el.value=metaData[f.k]; }); }
+function clearMeta(){ metaData={}; renderMetadata(); }
+function exportMeta(){ collectMeta(); const out=$('meta-out').value; if(out==='csv')downloadCSVMeta(); else downloadDDEX(); }
+function downloadCSVMeta(){ const rows=[['Field','Value']]; METAFIELDS.forEach(f=>rows.push([f.label, metaData[f.k]||''])); 
+  const csv=rows.map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  dl(new Blob([csv],{type:'text/csv'}), (metaData.trackTitle||'metadata')+'.csv'); }
+function xesc(s){ return (s||'').toString().replace(/[<>&'"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c])); }
+function downloadDDEX(){ const m=metaData; const now=new Date().toISOString();
+  const xml=`<?xml version="1.0" encoding="UTF-8"?>
+<ern:NewReleaseMessage xmlns:ern="http://ddex.net/xml/ern/43" MessageSchemaVersionId="ern/43">
+  <MessageHeader>
+    <MessageId>${xesc(uid())}</MessageId>
+    <MessageCreatedDateTime>${now}</MessageCreatedDateTime>
+    <SentOnBehalfOf>${xesc(m.label||m.albumArtist||'')}</SentOnBehalfOf>
+  </MessageHeader>
+  <PartyList>
+    <Party><PartyName><FullName>${xesc(m.primaryArtist||'')}</FullName></PartyName><Role>MainArtist</Role></Party>
+    ${m.songwriter?`<Party><PartyName><FullName>${xesc(m.songwriter)}</FullName></PartyName><Role>Composer</Role></Party>`:''}
+    ${m.label?`<Party><PartyName><FullName>${xesc(m.label)}</FullName></PartyName><Role>Label</Role></Party>`:''}
+  </PartyList>
+  <ResourceList>
+    <SoundRecording>
+      <ResourceReference>A1</ResourceReference>
+      <ISRC>${xesc(m.isrc||'')}</ISRC>
+      <ReferenceTitle><TitleText>${xesc(m.trackTitle||'')}</TitleText>${m.versionTitle?`<SubTitle>${xesc(m.versionTitle)}</SubTitle>`:''}</ReferenceTitle>
+      <DisplayArtist><PartyName><FullName>${xesc(m.primaryArtist||'')}</FullName></PartyName></DisplayArtist>
+      ${m.featuredArtist?`<DisplayArtist SequenceNumber="2"><PartyName><FullName>${xesc(m.featuredArtist)}</FullName></PartyName><ArtistRole>FeaturedArtist</ArtistRole></DisplayArtist>`:''}
+      <Duration>${xesc(m.duration||'')}</Duration>
+      <ParentalWarningType>${xesc(m.explicit||'NotExplicit')}</ParentalWarningType>
+      <LanguageOfPerformance>${xesc(m.language||'')}</LanguageOfPerformance>
+      <Genre><GenreText>${xesc(m.genre||'')}</GenreText>${m.subgenre?`<SubGenre>${xesc(m.subgenre)}</SubGenre>`:''}</Genre>
+      <PLine><Year>${xesc((m.pLine||'').replace(/[^0-9]/g,'').slice(0,4))}</Year><PLineText>${xesc(m.pLine||'')}</PLineText></PLine>
+      <SoundRecordingDetailsByTerritory><TerritoryCode>${xesc(m.territory||'Worldwide')}</TerritoryCode>
+        <Title><TitleText>${xesc(m.trackTitle||'')}</TitleText></Title>
+        <LabelName>${xesc(m.label||'')}</LabelName></SoundRecordingDetailsByTerritory>
+    </SoundRecording>
+  </ResourceList>
+  <ReleaseList>
+    <Release>
+      <ReleaseId><ICPN>${xesc(m.upc||'')}</ICPN>${m.grid?`<GRid>${xesc(m.grid)}</GRid>`:''}</ReleaseId>
+      <ReferenceTitle><TitleText>${xesc(m.releaseTitle||m.trackTitle||'')}</TitleText></ReferenceTitle>
+      <ReleaseType>${xesc(m.releaseType||'Single')}</ReleaseType>
+      <DisplayArtistName>${xesc(m.albumArtist||m.primaryArtist||'')}</DisplayArtistName>
+      <LabelName>${xesc(m.label||'')}</LabelName>
+      <PLine><PLineText>${xesc(m.pLine||'')}</PLineText></PLine>
+      <CLine><CLineText>${xesc(m.cLine||'')}</CLineText></CLine>
+      <Genre><GenreText>${xesc(m.marketingGenre||m.genre||'')}</GenreText></Genre>
+      <ReleaseDate>${xesc(m.releaseDate||'')}</ReleaseDate>
+      ${m.originalReleaseDate?`<OriginalReleaseDate>${xesc(m.originalReleaseDate)}</OriginalReleaseDate>`:''}
+    </Release>
+  </ReleaseList>
+</ern:NewReleaseMessage>`;
+  dl(new Blob([xml],{type:'application/xml'}), (metaData.trackTitle||'release')+'_DDEX.xml'); }
+function dl(blob,name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); }
+
+/* ---------- Metadata Checker (read MP3s) ---------- */
+let checkerResults=[];
+function metaCheckerHTML(){ let h=`<div class="card"><div class="card-pad">
+    <div class="dropzone" id="dzCheck" onclick="document.getElementById('fileCheck').click()"
+      ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropFiles(event,'check')">
+      <div style="font-size:32px;opacity:.5">&#9906;</div><b>Upload MP3 file(s)</b><div style="font-size:12.5px;margin-top:4px">Click or drag up to a whole album. Each file is scanned for attached metadata.</div></div>
+    <input type="file" id="fileCheck" accept="audio/mpeg,.mp3" multiple style="display:none" onchange="handleFiles(this.files,'check')">
+    ${window.jsmediatags?'':'<div class="msg err" style="margin-top:10px">Metadata reader library did not load (needs internet). Reconnect and reload.</div>'}
+    <div id="checkResults"></div></div></div>`; return h; }
+function dropFiles(ev,mode){ ev.preventDefault(); ev.currentTarget.classList.remove('over'); handleFiles(ev.dataTransfer.files, mode); }
+function readTags(file){ return new Promise(res=>{ if(!window.jsmediatags){res({error:'reader unavailable'});return;}
+  window.jsmediatags.read(file,{ onSuccess:t=>res(t.tags||{}), onError:e=>res({error:(e&&e.info)||'unreadable'}) }); }); }
+async function handleFiles(files,mode){ const arr=[...files].filter(f=>/\.mp3$/i.test(f.name)||f.type==='audio/mpeg').slice(0,30);
+  if(!arr.length){ alert('Please select MP3 files.'); return; }
+  if(mode==='check'){ checkerResults=[]; $('checkResults').innerHTML='<p style="color:var(--muted);margin-top:12px">Scanning…</p>';
+    for(const f of arr){ const tags=await readTags(f); checkerResults.push({name:f.name, tags, found:mapFoundTags(tags)}); }
+    renderCheckResults(); }
+  else { assignFiles=arr; assignData=[]; for(const f of arr){ const tags=await readTags(f); assignData.push({file:f, values:mapFoundTags(tags)}); } renderAssign(); }
+}
+function mapFoundTags(t){ const v={}; if(!t||t.error) return v;
+  const map={trackTitle:'title',primaryArtist:'artist',releaseTitle:'album',albumArtist:'TPE2',genre:'genre',trackNumber:'track',releaseDate:'year',composer:'TCOM',lyrics:'lyrics',comment:'comment'};
+  if(t.title)v.trackTitle=t.title; if(t.artist)v.primaryArtist=t.artist; if(t.album)v.releaseTitle=t.album; if(t.genre)v.genre=t.genre;
+  if(t.track)v.trackNumber=t.track; if(t.year)v.releaseDate=t.year;
+  // raw frames
+  const raw=t; const fr=(t && t.TSRC)?t.TSRC.data:null; if(fr)v.isrc=fr;
+  if(t.TCOM&&t.TCOM.data)v.songwriter=t.TCOM.data; if(t.TPE2&&t.TPE2.data)v.albumArtist=t.TPE2.data;
+  if(t.TPUB&&t.TPUB.data)v.publisher=t.TPUB.data; if(t.TBPM&&t.TBPM.data)v.bpm=t.TBPM.data; if(t.TKEY&&t.TKEY.data)v.key=t.TKEY.data;
+  if(t.TLAN&&t.TLAN.data)v.language=t.TLAN.data; if(t.TCOP&&t.TCOP.data)v.cLine=t.TCOP.data;
+  if(t.USLT&&t.USLT.data&&t.USLT.data.lyrics)v.lyrics=t.USLT.data.lyrics;
+  // TXXX user frames (may be array)
+  const txxx=t.TXXX; if(txxx){ const list=Array.isArray(txxx)?txxx:[txxx]; list.forEach(x=>{ if(x&&x.data){ const d=x.data.user_description||x.data.description; const val=x.data.data||x.data.value;
+    const mf=METAFIELDS.find(f=>f.id3_txxx&&(f.id3_txxx.toLowerCase()===(d||'').toLowerCase())); if(mf&&val)v[mf.k]=val; } }); }
+  return v; }
+function renderCheckResults(){ let h='';
+  checkerResults.forEach((r,i)=>{ const foundKeys=Object.keys(r.found);
+    const missing=METAFIELDS.filter(f=>!(f.k in r.found));
+    h+=`<div class="filecard"><h4>&#127925; ${escapeHtml(r.name)} <span style="color:var(--muted);font-weight:500;font-size:12px">— ${foundKeys.length} found, ${missing.length} missing</span></h4>
+      <div style="font-size:11px;color:var(--silver);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 2px">Found</div>`;
+    if(!foundKeys.length) h+=`<div style="color:var(--muted);font-size:12.5px">No metadata detected.</div>`;
+    foundKeys.forEach(k=>{ const f=METAFIELDS.find(x=>x.k===k); h+=`<div class="metarow"><span class="k">${f?f.label:k}</span><span class="v">${escapeHtml(r.found[k])}</span></div>`; });
+    h+=`<div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin:8px 0 2px">Missing</div>`;
+    missing.slice(0,40).forEach(f=>{ h+=`<div class="metarow miss"><span class="k">${f.label}</span><span class="v">missing</span></div>`; });
+    h+=`</div>`; });
+  h+=`<div class="toolbar"><button class="btn ghost sm" onclick="checkerCSV()">Download .csv</button><button class="btn ghost sm" onclick="checkerPDF()">Download .pdf</button><button class="btn primary sm" onclick="importToAssign()">Import to Assignment Tool</button></div>`;
+  $('checkResults').innerHTML=h; }
+function checkerCSV(){ const cols=['File',...METAFIELDS.map(f=>f.label)]; const rows=[cols];
+  checkerResults.forEach(r=>{ rows.push([r.name,...METAFIELDS.map(f=>r.found[f.k]||'')]); });
+  const csv=rows.map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  dl(new Blob([csv],{type:'text/csv'}),'metadata_check.csv'); }
+function checkerPDF(){ if(!window.jspdf){ window.print(); return; } const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'pt',format:'letter'});
+  let y=48; doc.setFontSize(16); doc.text('Metadata Check Report',48,y); y+=10; doc.setFontSize(9);
+  checkerResults.forEach(r=>{ y+=20; doc.setFontSize(12); doc.text(r.name,48,y); doc.setFontSize(8); 
+    METAFIELDS.forEach(f=>{ const val=r.found[f.k]; if(y>740){doc.addPage();y=48;} y+=12; doc.setTextColor(val?30:200,val?30:60,val?30:60); doc.text(`${f.label}: ${val||'MISSING'}`.slice(0,110),56,y); }); doc.setTextColor(0,0,0); });
+  doc.save('metadata_check.pdf'); }
+function importToAssign(){ assignFiles=checkerResults.map(r=>null); assignData=checkerResults.map(r=>({file:null,name:r.name,values:Object.assign({},r.found)})); metaTool='assign'; renderMetadata(); }
+
+/* ---------- Metadata Assignment (edit + write back) ---------- */
+let assignFiles=[], assignData=[];
+function metaAssignHTML(){ let h=`<div class="card"><div class="card-pad">
+    <div class="dropzone" id="dzAssign" onclick="document.getElementById('fileAssign').click()"
+      ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropFiles(event,'assign')">
+      <div style="font-size:32px;opacity:.5">&#9881;</div><b>Upload MP3 file(s) to complete</b><div style="font-size:12.5px;margin-top:4px">Existing tags load into the fields; missing ones are highlighted red. Fill them in, then download the tagged file(s).</div></div>
+    <input type="file" id="fileAssign" accept="audio/mpeg,.mp3" multiple style="display:none" onchange="handleFiles(this.files,'assign')">
+    ${window.ID3Writer?'':'<div class="msg err" style="margin-top:10px">Tag-writer library did not load (needs internet). Reconnect and reload to enable download.</div>'}
+    <div id="assignArea"></div></div></div>`; return h; }
+function renderAssign(){ let h=''; if(!assignData.length){ $('assignArea')&&($('assignArea').innerHTML=''); return; }
+  assignData.forEach((d,fi)=>{ h+=`<div class="filecard"><h4>&#127925; ${escapeHtml(d.name||(d.file&&d.file.name)||('File '+(fi+1)))} ${d.file?'':'<span style="color:var(--amber);font-size:11px">(imported — re-upload the MP3 to download tagged)</span>'}</h4><div class="mfields">`;
+    METAFIELDS.forEach(f=>{ const val=d.values[f.k]||''; const miss=!val; h+=`<div class="mfield ${miss?'missing':''}"><label>${f.label} <span class="qhelp">?<span class="tip">${f.help}</span></span></label><input id="af-${fi}-${f.k}" value="${escapeHtml(val)}"></div>`; });
+    h+=`</div></div>`; });
+  h+=`<div class="toolbar"><button class="btn primary sm" onclick="writeAndDownload()">Download tagged file(s)</button></div>`;
+  const area=$('assignArea'); if(area)area.innerHTML=h; else $('view-metadata').querySelector('#metaBody').innerHTML=metaAssignHTML(); }
+function collectAssign(){ assignData.forEach((d,fi)=>{ METAFIELDS.forEach(f=>{ const el=$('af-'+fi+'-'+f.k); if(el)d.values[f.k]=el.value.trim(); }); }); }
+async function writeAndDownload(){ collectAssign(); if(!window.ID3Writer){ alert('Tag-writer not loaded — reconnect to the internet and reload.'); return; }
+  let wrote=0;
+  for(const d of assignData){ if(!d.file){ continue; } const buf=await d.file.arrayBuffer(); const w=new window.ID3Writer(buf);
+    METAFIELDS.forEach(f=>{ const val=d.values[f.k]; if(!val)return;
+      try{ if(f.id3==='TRCK'||f.id3==='TPOS'){ w.setFrame(f.id3, val.toString()); }
+        else if(f.id3==='TPE1'||f.id3==='TCOM'||f.id3==='TEXT'){ w.setFrame(f.id3, val.split(';').map(s=>s.trim())); }
+        else if(f.id3==='USLT'){ w.setFrame('USLT',{description:'',lyrics:val}); }
+        else if(f.id3==='TYER'){ w.setFrame('TYER', (val.match(/\d{4}/)||[val])[0]); }
+        else if(f.id3){ w.setFrame(f.id3, val); }
+        else if(f.id3_txxx){ w.setFrame('TXXX',{description:f.id3_txxx, value:val}); }
+      }catch(e){ try{ if(f.id3_txxx)w.setFrame('TXXX',{description:f.id3_txxx,value:val}); }catch(_){} } });
+    w.addTag(); const blob=w.getBlob(); dl(blob, d.file.name.replace(/\.mp3$/i,'')+'_tagged.mp3'); wrote++; }
+  if(!wrote) alert('These entries were imported from the Checker without the audio. Re-upload the MP3 file(s) here to download the tagged versions.');
+}
+
 </script>
 </body>
 </html>
