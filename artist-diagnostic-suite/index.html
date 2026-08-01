@@ -284,6 +284,26 @@
   .cal-ev:hover{filter:brightness(1.15)}
   .cal-ev .t{font-size:10px;color:var(--silver)}
 
+  /* Contract generator */
+  .ctype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .csec{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;margin-bottom:18px}
+  @media(max-width:860px){.csec{grid-template-columns:1fr}}
+  .csec .fieldbox{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:16px 18px}
+  .csec .fieldbox h4{margin:0 0 12px;color:#fff;font-size:14.5px}
+  .csec .rec{background:var(--panel3);border:1px solid var(--rule2);border-left:4px solid var(--silver2);border-radius:12px;padding:14px 15px;font-size:12.5px;color:var(--ink);position:sticky;top:70px}
+  .csec .rec h5{margin:0 0 6px;color:var(--silver);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+  .csec .rec b{color:#fff}
+  .csec .rec .flag{color:var(--red);font-weight:700}
+  .csec .rec .ok{color:var(--green);font-weight:700}
+  .cff{margin-bottom:11px}
+  .cff label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px;font-weight:600}
+  .cff.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .docprev{background:#fff;color:#111;border-radius:10px;padding:34px 40px;font-family:'Times New Roman',Georgia,serif;font-size:13px;line-height:1.55;max-height:60vh;overflow:auto}
+  .docprev h1{font-size:18px;text-align:center;margin:0 0 4px} .docprev h2{font-size:14px;margin:16px 0 4px}
+  .docprev .sub{text-align:center;color:#555;font-size:11px;margin-bottom:18px}
+  .docprev p{margin:6px 0} .docprev .sig{margin-top:26px;display:flex;justify-content:space-between;gap:40px}
+  .docprev .sigline{flex:1;border-top:1px solid #111;padding-top:4px;font-size:11px;color:#333}
+  .docdisc{font-size:10px;color:#888;font-style:italic;border-top:1px solid #ccc;margin-top:20px;padding-top:8px}
   /* Metadata tool */
   .meta-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
   .meta-tab{padding:9px 16px;border:1px solid var(--rule2);border-radius:10px;background:var(--panel);cursor:pointer;font-weight:700;font-size:13px;color:var(--ink)}
@@ -408,6 +428,15 @@
       <button class="navitem" onclick="openMeta('checker')"><span class="ic">&#9906;</span> Metadata Checker</button>
       <button class="navitem" onclick="openMeta('assign')"><span class="ic">&#9881;</span> Metadata Assignment</button>
     </div>
+    <button class="navitem caret" id="contractToggle" onclick="toggleContractSub()"><span class="ic">&#9878;</span> Contracts <span class="ic-caret">&#8250;</span></button>
+    <div class="subnav" id="contractSub">
+      <button class="navitem" onclick="openContract('record')">Record Deal</button>
+      <button class="navitem" onclick="openContract('publishing')">Publishing Deal</button>
+      <button class="navitem" onclick="openContract('producer')">Producer Agreement</button>
+      <button class="navitem" onclick="openContract('split')">Split Sheet</button>
+      <button class="navitem" onclick="openContract('wmfh_std')">Work-for-Hire (Standard)</button>
+      <button class="navitem" onclick="openContract('wmfh_non')">Work-for-Hire (Non-Standard)</button>
+    </div>
     <button class="navitem hidden" id="navMyAccount" data-nav="myaccount" onclick="nav('myaccount')"><span class="ic">&#9733;</span> My Account</button>
     <div style="flex:1"></div>
     <button class="navitem" onclick="doLogout()"><span class="ic">&#8618;</span> Sign out</button>
@@ -424,6 +453,7 @@
     <div id="view-consult" class="view hidden"></div>
     <div id="view-calendar" class="view hidden"></div>
     <div id="view-metadata" class="view hidden"></div>
+    <div id="view-contracts" class="view hidden"></div>
     <div id="view-myaccount" class="view hidden"></div>
   </div>
   <div class="emblem" id="emblemApp"></div>
@@ -1171,11 +1201,11 @@ let currentView='home';
 function openDrawer(){ $('drawer').classList.add('open'); $('scrim').classList.add('open'); }
 function closeDrawer(){ $('drawer').classList.remove('open'); $('scrim').classList.remove('open'); }
 function toggleSubnav(){ $('diagSub').classList.toggle('open'); $('diagToggle').classList.toggle('open'); }
-function nav(view, keepDrawer){ currentView=view; ['home','diagnostic','consult','calendar','metadata','myaccount'].forEach(v=>$('view-'+v).classList.add('hidden'));
+function nav(view, keepDrawer){ currentView=view; ['home','diagnostic','consult','calendar','metadata','contracts','myaccount'].forEach(v=>$('view-'+v).classList.add('hidden'));
   $('view-'+view).classList.remove('hidden');
   document.querySelectorAll('.navitem[data-nav]').forEach(n=>n.classList.toggle('active', n.dataset.nav===view));
   const client=!CURRENT.isAdmin;
-  if(view==='home') renderHome(); if(view==='consult'){cSel.clear(); client?renderProgress():renderConsult();} if(view==='calendar'){ client?renderClientCalendar():renderCalendar(); } if(view==='metadata')renderMetadata(); if(view==='myaccount')renderMyAccount();
+  if(view==='home') renderHome(); if(view==='consult'){cSel.clear(); client?renderProgress():renderConsult();} if(view==='calendar'){ client?renderClientCalendar():renderCalendar(); } if(view==='metadata')renderMetadata(); if(view==='contracts')renderContracts(); if(view==='myaccount')renderMyAccount();
   if(!keepDrawer) closeDrawer(); window.scrollTo({top:0,behavior:'smooth'}); }
 async function enterApp(){ invalidate(); await ensureData(true); $('screen-auth').classList.add('hidden'); $('screen-app').classList.remove('hidden');
   $('uchipName').textContent=CURRENT.username; $('uchipAv').textContent=(CURRENT.username[0]||'?').toUpperCase();
@@ -1520,6 +1550,187 @@ async function writeAndDownload(){ collectAssign(); if(!window.ID3Writer){ alert
     w.addTag(); const blob=w.getBlob(); dl(blob, d.file.name.replace(/\.mp3$/i,'')+'_tagged.mp3'); wrote++; }
   if(!wrote) alert('These entries were imported from the Checker without the audio. Re-upload the MP3 file(s) here to download the tagged versions.');
 }
+
+
+/* ===================== CONTRACT GENERATOR ===================== */
+function toggleContractSub(){ $('contractSub').classList.toggle('open'); $('contractToggle').classList.toggle('open'); }
+let contractType='record', CS={};
+function openContract(t){ contractType=t; CS={}; closeDrawer(); nav('contracts'); }
+function cset(k,v){ CS[k]=v; updateRecs(); }
+function cg(k,d){ return (CS[k]!=null&&CS[k]!=='')?CS[k]:(d!==undefined?d:''); }
+function ph(k,label){ return (CS[k]!=null&&CS[k]!=='')?escapeHtml(CS[k]):('['+(label||k).toUpperCase()+']'); }
+function pctNum(k){ const n=parseFloat(CS[k]); return isNaN(n)?null:n; }
+
+/* recommendation helpers */
+function recRoyalty(){ const r=pctNum('royaltyRate'); if(r==null) return `<b>Industry norm (2026):</b> new-artist all-in royalties typically start around <b>15–18%</b> of the applicable base, escalating with sales/success. Anything <b>below 15%</b> is considered predatory by modern standards.`;
+  return (r<15?`<span class="flag">⚠ ${r}% is below the 15% floor</span> — sub-15% new-artist rates are a red flag in 2026. Push toward 15–18% with escalations.`:r<=18?`<span class="ok">✓ ${r}% is within the standard 15–18% new-artist range.</span> Add escalations (e.g., +1% per sales tier).`:`<span class="ok">✓ ${r}% is strong</span> — above the typical new-artist range; ensure the base (retail vs. net receipts) is clearly defined.`); }
+function recTerm(){ const opt=pctNum('optionPeriods'); const base=`<b>Norm:</b> initial term ~1 year (one “album cycle”), with the label holding <b>option periods</b> to extend. `;
+  if(opt==null) return base+`Keep total commitment to <b>1 firm + 2–4 options</b>; more than ~5–7 albums can lock you in for a decade.`;
+  return base+(opt>=5?`<span class="flag">⚠ ${opt} options</span> is on the long side — that can mean many years/albums. Negotiate fewer, or guaranteed release/marketing commitments per option.`:`<span class="ok">✓ ${opt} option period(s)</span> is within the typical 2–4 range.`); }
+function rec360(){ if(cg('threeSixty','No')==='No') return `<b>Norm:</b> traditional deals take <b>no</b> ancillary income. If a 360 clause is included, labels typically take <b>15–25%</b> of gross from covered streams (touring, merch, endorsements) — justified only by real investment across those areas.`;
+  const p=pctNum('threeSixtyPct'); return (p==null?`A 360 share of <b>15–25%</b> is typical. `:(p>25?`<span class="flag">⚠ ${p}% exceeds the usual 15–25% band.</span> `:`<span class="ok">✓ ${p}% sits in the standard 15–25% band.</span> `))+`Carve out income the label doesn’t actively help generate, and sunset the clause after the term.`; }
+function recAdvance(){ return `<b>Norm:</b> the advance is a <b>recoupable</b> prepayment against your royalties — you see no further royalties until it (plus other recoupable costs) is earned back. New-artist advances vary widely (a few thousand to low six figures); larger advances usually mean larger recoupment and tighter terms.`; }
+function recRecoup(){ return `<b>Norm:</b> recording costs, video budgets, and (some) marketing/tour support are commonly recoupable; the advance always is. <b>Watch cross-collateralization</b> — if enabled, unrecouped costs on one album can be recovered from another album’s (or another right’s) earnings. Narrow it where you can.`; }
+function recOwnership(){ const o=cg('masterOwnership'); return `<b>Norm:</b> major deals usually have the <b>label own the masters</b> for the full copyright term; artist-friendlier deals are <b>licenses</b> (rights revert after a set period). ${o==='Artist retains ownership (license to label)'?'<span class="ok">✓ Retaining ownership with a license is the artist-favorable structure.</span>':o?'Negotiate a <b>reversion</b> of masters after a defined period, even if the label owns them initially.':''}`; }
+function recPubSplit(){ const d=cg('pubDealType'); if(d==='Co-Publishing') return `<b>Co-pub norm (75/25):</b> you keep the <b>50% writer’s share</b> plus <b>half of the publisher’s share (25%)</b> = <b>75%</b> to you, 25% to the publisher, who administers. Term commonly 3 years.`;
+  if(d==='Administration') return `<b>Admin norm:</b> you keep <b>~80–90%</b>; the administrator collects worldwide and takes a <b>10–20% admin fee</b>. You retain ownership. Great for established writers.`;
+  if(d==='Exclusive Songwriter') return `<b>Norm:</b> you assign new compositions during the term for an advance; typically a <b>50/50</b> split. More publisher-favorable — seek reversion and a modest, recoupable advance.`;
+  if(d==='Full Assignment') return `<span class="flag">⚠ Full assignment transfers ownership of the copyrights.</span> Rare/aggressive today — insist on strong reversion and a meaningful advance, and consider co-pub instead.`;
+  return `<b>Choose a structure:</b> Co-Publishing (you keep ~75%), Administration (you keep ~80–90%, pay a 10–20% fee), Exclusive Songwriter, or Full Assignment (transfers ownership — usually avoid).`; }
+function recPoints(){ const p=pctNum('producerPoints'); const base=`<b>Norm:</b> an independent producer typically earns <b>2–4 “points”</b> (percent of the record royalty), plus any negotiated flat fee. Points are usually paid <b>after the label recoups recording costs</b> (“record-one” royalties are more producer-favorable).`;
+  if(p==null) return base; return base+(p>5?` <span class="flag">⚠ ${p} points is high for one producer</span> unless they’re a major name.`:` <span class="ok">✓ ${p} points is standard.</span>`); }
+function recSplitTotal(){ let sum=0,any=false; for(let i=1;i<=6;i++){ const v=pctNum('w'+i+'pct'); if(v!=null){sum+=v;any=true;} }
+  if(!any) return `<b>Rule:</b> every writer’s percentage must be agreed <b>in writing</b> and total exactly <b>100%</b>. Record each writer’s role (music/lyrics), PRO, and IPI/CAE number, and mirror these splits in your PRO and MLC registrations.`;
+  return (Math.abs(sum-100)<0.01?`<span class="ok">✓ Splits total 100%.</span> `:`<span class="flag">⚠ Splits total ${sum}% — must equal 100%.</span> `)+`Mirror these exactly in your PRO and The MLC.`; }
+function recWMFH(){ return `<b>Norm:</b> a “work made for hire” under 17 U.S.C. §101 means the <b>hiring party owns the work from creation</b>. For it to qualify, it must be a valid category <i>and</i> in a signed agreement — so a <b>backup assignment</b> is always included in case WMFH doesn’t apply. Standard deals give the creator a fee and credit but no ownership or royalties.`; }
+function recWMFHNon(){ return `<b>Non-standard (negotiated):</b> the creator keeps something back — e.g., <b>a royalty/points participation, credit, a reversion of rights, or a limited license back</b>. Spell out exactly what is retained; anything not reserved is owned by the hiring party.`; }
+
+/* ---------- Contract schemas ---------- */
+const CONTRACTS={
+ record:{ label:'Record Deal Agreement', partyA:'Label', partyB:'Artist',
+  sections:[
+   {id:'term',label:'Term & Options',fields:[['effectiveDate','Effective date','date'],['initialTerm','Initial term','select',['1 year (one album cycle)','2 years','18 months']],['optionPeriods','Number of option periods','num'],['albumsPerPeriod','Albums per period','num']],rec:recTerm},
+   {id:'commit',label:'Recording Commitment & Delivery',fields:[['minMasters','Minimum masters / album','num'],['deliveryReqs','Delivery requirements (format, quality)','text']],rec:()=>`<b>Norm:</b> defines how many satisfactory masters make a “delivered” album and the technical delivery standard. Tie the label’s obligations (release, marketing spend) to your delivery so they can’t shelve the record.`},
+   {id:'advance',label:'Advance',fields:[['advanceAmount','Advance amount (per period, $)','text'],['advanceSchedule','Payment schedule','text']],rec:recAdvance},
+   {id:'royalty',label:'Artist Royalty',fields:[['royaltyRate','All-in royalty rate (%)','num'],['royaltyBase','Royalty base','select',['Net receipts (streaming era standard)','Retail price (PPD)','Wholesale']],['escalations','Escalations (e.g., +1% per 250k units)','text']],rec:recRoyalty},
+   {id:'recoup',label:'Recoupment & Cross-Collateralization',fields:[['recoupItems','Recoupable costs','text'],['crossCollateral','Cross-collateralize albums/rights?','select',['No','Yes']]],rec:recRecoup},
+   {id:'rights',label:'Rights Granted & Ownership',fields:[['masterOwnership','Master ownership','select',['Label owns masters (life of copyright)','Label owns with reversion after term','Artist retains ownership (license to label)']],['territory','Territory','select',['Worldwide','United States','Specify']],['reversion','Reversion period (if any)','text']],rec:recOwnership},
+   {id:'ancillary',label:'360 / Ancillary Rights',fields:[['threeSixty','Include 360 (ancillary income)?','select',['No','Yes']],['threeSixtyPct','Label share (%)','num'],['threeSixtyStreams','Covered income streams','text']],rec:rec360},
+   {id:'creative',label:'Creative Control & Approvals',fields:[['approvals','Artist approvals (mixes, artwork, singles, videos)','text'],['creativeControl','Creative control','select',['Artist has meaningful approval','Label has final say','Mutual approval']]],rec:()=>`<b>Norm:</b> negotiate <b>mutual approval</b> over masters, artwork, single selection, and marketing. Retain approval over uses of your name/likeness and any AI/synthetic recreations of your voice.`},
+   {id:'accounting',label:'Accounting & Audit',fields:[['accountingFreq','Accounting frequency','select',['Semi-annual','Quarterly','Annual']],['auditRight','Audit right','select',['Yes — annual audit right','No']]],rec:()=>`<b>Norm:</b> semi-annual statements and an <b>annual audit right</b> (with a reasonable cure/objection window) are standard and worth insisting on.`},
+   {id:'misc',label:'Governing Law & Boilerplate',fields:[['governingLaw','Governing law (state)','text'],['dispute','Dispute resolution','select',['Courts of the governing state','Binding arbitration','Mediation then arbitration']]],rec:()=>`<b>Standard boilerplate:</b> governing law, dispute resolution, notices, assignment, force majeure, severability, and “entire agreement.” Ensure <b>assignment</b> can’t move you to a party you didn’t vet, and that key-person/label obligations survive.`}
+  ]},
+ publishing:{ label:'Publishing Deal Agreement', partyA:'Publisher', partyB:'Writer',
+  sections:[
+   {id:'type',label:'Deal Structure',fields:[['effectiveDate','Effective date','date'],['pubDealType','Type of publishing deal','select',['Co-Publishing','Administration','Exclusive Songwriter','Full Assignment']]],rec:recPubSplit},
+   {id:'term',label:'Term & Territory',fields:[['pubTerm','Term (years)','num'],['pubTerritory','Territory','select',['Worldwide','United States','Specify']]],rec:()=>`<b>Norm:</b> publishing terms run <b>2–5 years</b> (co-pub often 3), worldwide. Seek a <b>reversion</b> of your copyrights after the term and a “retention” period cap.`},
+   {id:'split',label:'Ownership & Income Split',fields:[['writerShare','Writer’s total share (%)','num'],['pubShare','Publisher’s share (%)','num'],['adminFee','Administration fee (%)','num']],rec:recPubSplit},
+   {id:'advance',label:'Advance',fields:[['pubAdvance','Advance ($)','text'],['pubRecoup','Recoupment terms','text']],rec:()=>`<b>Norm:</b> advances are recoupable from your share only (not cross-collateralized with other deals, ideally). Keep the advance sized to what the catalog can realistically earn back.`},
+   {id:'works',label:'Compositions Covered',fields:[['worksCovered','Works covered','select',['Existing catalog only','New works during term','Both existing + new']],['exclusions','Exclusions / carve-outs','text']],rec:()=>`<b>Norm:</b> define precisely which songs are in the deal. Exclusive songwriter deals capture <b>new</b> works during the term — carve out co-writes you don’t control and prior commitments.`},
+   {id:'misc',label:'Governing Law & Boilerplate',fields:[['governingLaw','Governing law (state)','text'],['dispute','Dispute resolution','select',['Courts of the governing state','Binding arbitration','Mediation then arbitration']]],rec:()=>`<b>Standard boilerplate</b> plus: audit rights, accounting frequency (semi-annual), and confirmation that the publisher registers works globally and collects both performance and mechanical income.`}
+  ]},
+ producer:{ label:'Producer Agreement', partyA:'Artist / Label', partyB:'Producer',
+  sections:[
+   {id:'services',label:'Services & Recordings',fields:[['effectiveDate','Effective date','date'],['tracks','Track(s) / project produced','text'],['deliverables','Deliverables (stems, mixes, formats)','text']],rec:()=>`<b>Norm:</b> list the exact tracks and deliverables (mix, stems, session files). State that the producer delivers on time and that files/masters are turned over on payment.`},
+   {id:'fee',label:'Fee & Producer Points',fields:[['producerFee','Flat fee ($)','text'],['producerPoints','Producer points (%)','num'],['pointsBasis','Points basis','select',['Record-one (from first sale)','After label recoups recording costs']]],rec:recPoints},
+   {id:'ownership',label:'Ownership & Copyright',fields:[['masterOwn','Master ownership','select',['Work-for-hire to Artist/Label','Producer retains a co-ownership %','Producer licenses master']],['writingSplit','Producer’s songwriting split (if any) (%)','num']],rec:()=>`<b>Norm:</b> the sound recording is usually a <b>work-for-hire</b> owned by the artist/label (with a backup assignment). Separately, if the producer contributed to the <b>composition</b> (a beat/melody), they get a <b>songwriting split</b> — document it on the split sheet.`},
+   {id:'credit',label:'Credit',fields:[['producerCredit','Credit line','text']],rec:()=>`<b>Norm:</b> “Produced by [Name]” credit on all copies/metadata is standard and free — always include it.`},
+   {id:'misc',label:'Governing Law & Boilerplate',fields:[['governingLaw','Governing law (state)','text'],['dispute','Dispute resolution','select',['Courts of the governing state','Binding arbitration','Mediation then arbitration']]],rec:()=>`<b>Standard boilerplate</b> plus a warranty that the production is original / samples are cleared, and indemnification for any uncleared material the producer brings.`}
+  ]},
+ split:{ label:'Split Sheet Agreement', partyA:'Writer', partyB:'Co-Writer(s)',
+  sections:[
+   {id:'song',label:'Song Information',fields:[['songTitle','Song title','text'],['splitDate','Date','date'],['studio','Studio / session location','text']],rec:()=>`<b>Purpose:</b> a split sheet records who wrote what and each writer’s ownership <b>the day the song is created</b> — the single best defense against future disputes.`},
+   {id:'writers',label:'Writers & Shares',fields:[
+     ['w1name','Writer 1 — name','text'],['w1pro','Writer 1 — PRO','text'],['w1ipi','Writer 1 — IPI/CAE','text'],['w1pct','Writer 1 — %','num'],
+     ['w2name','Writer 2 — name','text'],['w2pro','Writer 2 — PRO','text'],['w2ipi','Writer 2 — IPI/CAE','text'],['w2pct','Writer 2 — %','num'],
+     ['w3name','Writer 3 — name','text'],['w3pro','Writer 3 — PRO','text'],['w3ipi','Writer 3 — IPI/CAE','text'],['w3pct','Writer 3 — %','num'],
+     ['w4name','Writer 4 — name','text'],['w4pro','Writer 4 — PRO','text'],['w4ipi','Writer 4 — IPI/CAE','text'],['w4pct','Writer 4 — %','num']],rec:recSplitTotal},
+   {id:'notes',label:'Notes',fields:[['splitNotes','Publisher(s) / master notes','textarea']],rec:()=>`<b>Tip:</b> note each writer’s publisher (or “self-published”) and confirm the master-side ownership separately. Every writer should sign.`}
+  ]},
+ wmfh_std:{ label:'Work Made for Hire Agreement — Standard', partyA:'Hiring Party', partyB:'Creator',
+  sections:[
+   {id:'parties',label:'Engagement',fields:[['effectiveDate','Effective date','date'],['workDesc','Description of the work','textarea'],['fee','Fee / consideration ($)','text']],rec:()=>`<b>Norm:</b> the hiring party engages the creator to produce a specific work for a fixed fee. Describe the work precisely and confirm payment terms.`},
+   {id:'grant',label:'Ownership (Work Made for Hire)',fields:[['wmfhCategory','WMFH category','select',['Specially ordered/commissioned work','Work by employee within scope','Contribution to a collective work']],['backupAssign','Include backup assignment?','select',['Yes (recommended)','No']]],rec:recWMFH},
+   {id:'warranties',label:'Warranties & Indemnity',fields:[['originality','Originality / clearance warranty','text']],rec:()=>`<b>Norm:</b> the creator warrants the work is original, doesn’t infringe, and any third-party material is cleared, and indemnifies the hiring party for breaches.`},
+   {id:'misc',label:'Governing Law & Boilerplate',fields:[['governingLaw','Governing law (state)','text'],['dispute','Dispute resolution','select',['Courts of the governing state','Binding arbitration','Mediation then arbitration']]],rec:()=>`<b>Standard boilerplate.</b> Include a moral-rights waiver where permitted and confirm no royalties/credit are owed unless separately agreed.`}
+  ]},
+ wmfh_non:{ label:'Work Made for Hire Agreement — Non-Standard', partyA:'Hiring Party', partyB:'Creator',
+  sections:[
+   {id:'parties',label:'Engagement',fields:[['effectiveDate','Effective date','date'],['workDesc','Description of the work','textarea'],['fee','Fee / consideration ($)','text']],rec:()=>`<b>Norm:</b> as with the standard version, but here the creator negotiates carve-outs — so define the engagement and fee, then specify exactly what the creator keeps below.`},
+   {id:'grant',label:'Ownership & Backup Assignment',fields:[['wmfhCategory','WMFH category','select',['Specially ordered/commissioned work','Work by employee within scope','Contribution to a collective work']],['backupAssign','Include backup assignment?','select',['Yes (recommended)','No']]],rec:recWMFH},
+   {id:'retained',label:'Rights Retained by Creator (Non-Standard Terms)',fields:[['retainRoyalty','Royalty / points participation','text'],['retainCredit','Credit retained','text'],['reversion','Reversion of rights (after period/condition)','text'],['licenseBack','License-back to creator (scope)','text'],['aiVoice','AI / voice-replica restrictions','text']],rec:recWMFHNon},
+   {id:'misc',label:'Governing Law & Boilerplate',fields:[['governingLaw','Governing law (state)','text'],['dispute','Dispute resolution','select',['Courts of the governing state','Binding arbitration','Mediation then arbitration']]],rec:()=>`<b>Standard boilerplate.</b> Because rights are split, be explicit: anything not expressly reserved by the creator is owned by the hiring party.`}
+  ]}
+};
+
+/* ---------- Render ---------- */
+function renderContracts(){ const types=[['record','Record Deal'],['publishing','Publishing'],['producer','Producer'],['split','Split Sheet'],['wmfh_std','WFH — Standard'],['wmfh_non','WFH — Non-Standard']];
+  const tabs=types.map(t=>`<div class="meta-tab ${contractType===t[0]?'active':''}" onclick="contractType='${t[0]}';CS={};renderContracts()">${t[1]}</div>`).join('');
+  const C=CONTRACTS[contractType];
+  let h=`<div class="page-h"><span class="barp"></span><h2>Contract Generator</h2><span class="spacer"></span><button class="btn primary sm" onclick="generateContract()">Generate document</button></div>
+    <p class="page-sub">Build an industry-aligned <b>${C.label}</b>. Fill each section; the panel on the right shows the current industry-normal guidance, updating as you enter terms.</p>
+    <div class="ctype-tabs">${tabs}</div>
+    <div class="card"><div class="card-pad">
+      <div class="csec"><div class="fieldbox"><h4>Parties</h4>
+        <div class="cff two"><div><label>${C.partyA} — legal name</label><input value="${ph('partyAName')===('['+'PARTYANAME]')?'':escapeHtml(cg('partyAName'))}" oninput="cset('partyAName',this.value)" placeholder="${escapeHtml(C.partyA)} legal name/entity"></div>
+          <div><label>${C.partyB} — legal name</label><input value="${escapeHtml(cg('partyBName'))}" oninput="cset('partyBName',this.value)" placeholder="${escapeHtml(C.partyB)} legal name"></div></div>
+        <div class="cff two"><div><label>${C.partyA} — address</label><input value="${escapeHtml(cg('partyAAddr'))}" oninput="cset('partyAAddr',this.value)" placeholder="Address"></div>
+          <div><label>${C.partyB} — address</label><input value="${escapeHtml(cg('partyBAddr'))}" oninput="cset('partyBAddr',this.value)" placeholder="Address"></div></div>
+      </div><div class="rec"><h5>Guidance</h5>Use full legal names/entities and addresses. If either party is a company (LLC, etc.), name the entity and the signatory’s title. Both parties should be of legal age and authority to contract.</div></div>`;
+  C.sections.forEach(s=>{ h+=`<div class="csec"><div class="fieldbox"><h4>${s.label}</h4>`;
+    s.fields.forEach(f=>{ const [k,label,type,opts]=f; h+=`<div class="cff"><label>${label}</label>`;
+      if(type==='select'){ h+=`<select oninput="cset('${k}',this.value)" onchange="cset('${k}',this.value)">${opts.map(o=>`<option ${cg(k)===o?'selected':''}>${o}</option>`).join('')}</select>`; }
+      else if(type==='textarea'){ h+=`<textarea oninput="cset('${k}',this.value)">${escapeHtml(cg(k))}</textarea>`; }
+      else if(type==='date'){ h+=`<input type="date" value="${escapeHtml(cg(k))}" oninput="cset('${k}',this.value)">`; }
+      else if(type==='num'){ h+=`<input type="number" value="${escapeHtml(cg(k))}" oninput="cset('${k}',this.value)">`; }
+      else { h+=`<input value="${escapeHtml(cg(k))}" oninput="cset('${k}',this.value)">`; }
+      h+=`</div>`; });
+    h+=`</div><div class="rec" id="crec-${s.id}"><h5>Industry norm</h5>${s.rec()}</div></div>`; });
+  h+=`<div class="foot-note">These are educational, industry-aligned templates — not legal advice. Have any final contract reviewed by a qualified music attorney and properly executed before relying on it.</div></div></div>`;
+  $('view-contracts').innerHTML=h;
+  // initialize select defaults into CS
+  C.sections.forEach(s=>s.fields.forEach(f=>{ if(f[2]==='select'&&CS[f[0]]==null)CS[f[0]]=f[3][0]; }));
+}
+function updateRecs(){ const C=CONTRACTS[contractType]; C.sections.forEach(s=>{ const el=$('crec-'+s.id); if(el)el.innerHTML='<h5>Industry norm</h5>'+s.rec(); }); }
+
+/* ---------- Generate document ---------- */
+function generateContract(){ const C=CONTRACTS[contractType]; const d=cg('effectiveDate')||'____________';
+  const A=ph('partyAName',C.partyA), B=ph('partyBName',C.partyB);
+  let arts=''; let n=0;
+  C.sections.forEach(s=>{ if(s.id==='term'||s.id==='parties'||s.id==='song'){} n++;
+    arts+=`<h2>ARTICLE ${n}. ${s.label.toUpperCase()}</h2>${clauseText(s)}`; });
+  const html=`<h1>${C.label.toUpperCase()}</h1>
+    <div class="sub">Dated as of ${escapeHtml(d)}</div>
+    <p>This ${escapeHtml(C.label)} (the “Agreement”) is entered into as of ${escapeHtml(d)} by and between <b>${A}</b> (“${escapeHtml(C.partyA)}”)${cg('partyAAddr')?', located at '+ph('partyAAddr'):''}, and <b>${B}</b> (“${escapeHtml(C.partyB)}”)${cg('partyBAddr')?', located at '+ph('partyBAddr'):''}. The parties agree as follows:</p>
+    ${arts}
+    <div class="sig"><div class="sigline">${A}<br>Signature / Date</div><div class="sigline">${B}<br>Signature / Date</div></div>
+    <div class="docdisc">This document was generated by the Rizvanov Technology Artist Diagnostic Suite as an industry-aligned template. It is not legal advice and does not create an attorney–client relationship. Have it reviewed by a qualified music attorney and properly executed before relying on it. © ™ 2026 Rizvanov Technology LLC.</div>`;
+  $('modalHost').innerHTML=`<div class="modal-scrim" onclick="if(event.target===this)closeModal()"><div class="modal" style="max-width:820px">
+    <div class="mhead"><h3>${escapeHtml(C.label)} — preview</h3><button class="xbtn" onclick="closeModal()">&times;</button></div>
+    <div class="mbody"><div class="docprev" id="docPrev">${html}</div></div>
+    <div class="mfoot"><div></div><div style="display:flex;gap:8px"><button class="btn ghost sm" onclick="printContract()">Print / PDF</button><button class="btn primary sm" onclick="downloadContract()">Download (.doc)</button></div></div>
+  </div></div>`;
+}
+function clauseText(s){ const g=cg; const P=ph; 
+  // Generic: render each field as a labeled clause line, using entered value or a bracketed placeholder.
+  let out='';
+  const map={
+    term:()=>`<p>The initial term shall be <b>${P('initialTerm','initial term')}</b>, commencing on the Effective Date. ${pctNum('optionPeriods')?`${cg('partyAName')?P('partyAName'):'The Label'} shall have <b>${P('optionPeriods')}</b> separate, consecutive, and irrevocable option period(s), each for the delivery of <b>${P('albumsPerPeriod','[#]')}</b> album(s), exercisable by written notice.`:'Option periods, if any, are as set forth herein.'}</p>`,
+    advance:()=>`<p>Upon execution and as a recoupable advance against royalties, ${cg('partyAName')?P('partyAName'):'the paying party'} shall pay <b>$${P('advanceAmount','amount')}</b> per period${cg('advanceSchedule')?', payable '+P('advanceSchedule'):''}. Such advance is fully recoupable from the ${'Artist’s'} royalties hereunder.</p>`,
+    royalty:()=>`<p>The Artist shall be paid an all-in royalty of <b>${P('royaltyRate','rate')}%</b> of <b>${P('royaltyBase','net receipts')}</b>${cg('escalations')?', with escalations as follows: '+P('escalations'):''}. Royalties accrue only after recoupment of all recoupable costs.</p>`,
+    recoup:()=>`<p>Recoupable costs include ${cg('recoupItems')?P('recoupItems'):'the advance, recording costs, video budgets, and agreed marketing/tour support'}. The parties’ accounts ${cg('crossCollateral')==='Yes'?'<b>shall be cross-collateralized</b>':'shall <b>not</b> be cross-collateralized'} across albums and rights.</p>`,
+    rights:()=>`<p>Ownership of the master recordings: <b>${P('masterOwnership','ownership')}</b>. The rights are granted for the territory of <b>${P('territory','Worldwide')}</b>${cg('reversion')?', with reversion to the Artist as follows: '+P('reversion'):''}.</p>`,
+    ancillary:()=>`<p>${cg('threeSixty')==='Yes'?`The Label shall receive <b>${P('threeSixtyPct')}%</b> of the Artist’s gross income from the following ancillary streams: ${P('threeSixtyStreams','touring, merchandising, endorsements')}.`:'This is a traditional (non-360) agreement; the Label receives no share of the Artist’s ancillary income (touring, merchandising, endorsements, etc.).'}</p>`,
+    creative:()=>`<p>Creative control: <b>${P('creativeControl','mutual approval')}</b>. The Artist shall have approval over ${cg('approvals')?P('approvals'):'masters, artwork, single selection, and marketing materials'}, and over any use of the Artist’s name, likeness, or AI/synthetic recreation of the Artist’s voice.</p>`,
+    accounting:()=>`<p>The Label shall render <b>${P('accountingFreq','semi-annual')}</b> royalty statements. Audit right: <b>${P('auditRight','Yes — annual audit right')}</b>.</p>`,
+    misc:()=>`<p>This Agreement shall be governed by the laws of <b>${P('governingLaw','[STATE]')}</b>. Disputes shall be resolved by <b>${P('dispute','the courts of the governing state')}</b>. This Agreement constitutes the entire agreement between the parties, may be amended only in a signed writing, and its provisions are severable. Neither party may assign this Agreement without consent except as expressly permitted.</p>`,
+    commit:()=>`<p>The Artist shall deliver a minimum of <b>${P('minMasters','[#]')}</b> commercially and technically satisfactory master(s) per album${cg('deliveryReqs')?', meeting the following delivery requirements: '+P('deliveryReqs'):''}. Delivery triggers the Label’s release and marketing obligations.</p>`,
+    // publishing
+    type:()=>`<p>This is a <b>${P('pubDealType','publishing')}</b> arrangement between the Publisher and the Writer with respect to the Compositions defined herein.</p>`,
+    split:()=>`<p>Income and ownership: the Writer shall retain <b>${P('writerShare','[%]')}%</b> and the Publisher <b>${P('pubShare','[%]')}%</b>${cg('adminFee')?`; the administration fee shall be <b>${P('adminFee')}%</b>`:''}. The Writer’s 50% “writer’s share” of performance income is always paid directly to the Writer by the applicable society.</p>`,
+    works:()=>`<p>Compositions covered: <b>${P('worksCovered','[scope]')}</b>${cg('exclusions')?`. Excluded: ${P('exclusions')}`:''}.</p>`,
+    // producer
+    services:()=>`<p>The Producer shall produce <b>${P('tracks','[track(s)]')}</b> and deliver ${cg('deliverables')?P('deliverables'):'final mixes, stems, and session files'} in a timely, professional manner.</p>`,
+    fee:()=>`<p>Compensation: a flat fee of <b>$${P('producerFee','[amount]')}</b> and <b>${P('producerPoints','[#]')} producer point(s)</b> of the applicable record royalty, calculated on a <b>${P('pointsBasis','record-one')}</b> basis.</p>`,
+    ownership:()=>`<p>The master recording shall be <b>${P('masterOwn','a work-for-hire owned by the Artist/Label')}</b> (with a backup assignment of all rights). ${pctNum('writingSplit')?`The Producer’s songwriting split in the underlying composition shall be <b>${P('writingSplit')}%</b>, to be documented on the split sheet.`:'Any songwriting contribution by the Producer shall be documented separately on a split sheet.'}</p>`,
+    credit:()=>`<p>Credit: the Producer shall receive the credit “${cg('producerCredit')?P('producerCredit'):'Produced by '+ (cg('partyBName')?P('partyBName'):'[Producer]')}” on all copies and metadata.</p>`,
+    // split sheet
+    song:()=>`<p>Song: <b>${P('songTitle','[title]')}</b>${cg('studio')?`, created at ${P('studio')}`:''}, dated ${P('splitDate','[date]')}.</p>`,
+    writers:()=>{ let r='<p>The undersigned writers agree to the following ownership of the composition:</p><p>'; for(let i=1;i<=4;i++){ if(cg('w'+i+'name')){ r+=`&bull; <b>${P('w'+i+'name')}</b> — ${P('w'+i+'pct','[%]')}% (PRO: ${cg('w'+i+'pro')?P('w'+i+'pro'):'—'}, IPI: ${cg('w'+i+'ipi')?P('w'+i+'ipi'):'—'})<br>`; } } r+='</p><p>The parties represent that the foregoing percentages total 100% and shall be registered accordingly with their PRO(s) and The MLC.</p>'; return r; },
+    notes:()=>cg('splitNotes')?`<p>${P('splitNotes')}</p>`:'',
+    // wmfh
+    parties:()=>`<p>The Hiring Party engages the Creator to create the following work (the “Work”): ${cg('workDesc')?P('workDesc'):'[description of the Work]'}. In consideration, the Hiring Party shall pay <b>$${P('fee','[amount]')}</b>.</p>`,
+    grant:()=>`<p>The Work is a <b>“work made for hire”</b> under 17 U.S.C. §101 (${P('wmfhCategory','[category]')}), and the Hiring Party is the sole author and owner of all rights in the Work from creation. ${cg('backupAssign','Yes (recommended)').indexOf('Yes')===0?'To the extent the Work does not so qualify, the Creator hereby irrevocably <b>assigns</b> all right, title, and interest in the Work to the Hiring Party.':''}</p>`,
+    warranties:()=>`<p>The Creator warrants that the Work is original, does not infringe any third-party rights, and that any third-party material is fully cleared, and shall indemnify the Hiring Party against breaches of these warranties.</p>`,
+    retained:()=>`<p><b>Rights retained by the Creator (non-standard):</b> ${cg('retainRoyalty')?`royalty/points participation: ${P('retainRoyalty')}; `:''}${cg('retainCredit')?`credit: ${P('retainCredit')}; `:''}${cg('reversion')?`reversion: ${P('reversion')}; `:''}${cg('licenseBack')?`license-back to the Creator: ${P('licenseBack')}; `:''}${cg('aiVoice')?`AI/voice-replica restrictions: ${P('aiVoice')}. `:''}Anything not expressly reserved above is owned by the Hiring Party.</p>`
+  };
+  return (map[s.id]?map[s.id]():`<p>${s.label}: as agreed by the parties.</p>`); }
+function C0(){ return false; } // placeholder guard (unused branches)
+function contractDocHTML(){ return $('docPrev')?$('docPrev').innerHTML:''; }
+function downloadContract(){ const C=CONTRACTS[contractType]; const inner=contractDocHTML();
+  const full=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5} h1{font-size:16pt;text-align:center} h2{font-size:13pt} .sub{text-align:center;color:#555} .sig{margin-top:40px} .sigline{border-top:1px solid #000;width:45%;display:inline-block;margin-right:4%;padding-top:4px;font-size:10pt} .docdisc{font-size:8pt;color:#777;font-style:italic;border-top:1px solid #ccc;margin-top:24px;padding-top:8px}</style></head><body>${inner}</body></html>`;
+  dl(new Blob([full],{type:'application/msword'}), (C.label.replace(/[^a-z0-9]+/gi,'_'))+'.doc'); }
+function printContract(){ const w=window.open('','_blank'); if(!w){window.print();return;} w.document.write('<html><head><title>Contract</title><style>body{font-family:Times New Roman,serif;font-size:12pt;line-height:1.5;padding:40px} h1{font-size:16pt;text-align:center} h2{font-size:13pt} .sub{text-align:center;color:#555} .sig{margin-top:40px;display:flex;justify-content:space-between;gap:40px} .sigline{flex:1;border-top:1px solid #000;padding-top:4px;font-size:10pt} .docdisc{font-size:8pt;color:#777;font-style:italic;border-top:1px solid #ccc;margin-top:24px;padding-top:8px}</style></head><body>'+contractDocHTML()+'</body></html>'); w.document.close(); setTimeout(()=>w.print(),300); }
 
 </script>
 </body>
