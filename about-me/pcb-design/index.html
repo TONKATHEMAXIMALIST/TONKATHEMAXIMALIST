@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCB Design &amp; Hardware | Anton Fanisovich Rizvanov</title>
+    <meta name="description" content="Custom PCB design and electronic instrument hardware, from two-layer boards to eight-layer stackups, by Anton Fanisovich Rizvanov.">
+    <link rel="stylesheet" href="../pagestyle.css">
+    <style>
+        .stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+            margin: 0 0 40px;
+            padding: 0;
+            list-style: none;
+        }
+        .stack li {
+            border: 1px solid var(--hairline);
+            border-radius: 4px;
+            padding: 26px 24px;
+            background: var(--bg-raised);
+        }
+        .stack strong {
+            display: block;
+            color: var(--accent-gold);
+            font-weight: 400;
+            font-size: 1.2rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+        .stack span {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <nav>
+        <a href="../">Home</a>
+        <a href="../jazz-trumpet/">Jazz Trumpet</a>
+        <a href="../music-production/">Music Production</a>
+        <a href="../classical/">Classical</a>
+        <a href="../jewelry-design/">Jewelry</a>
+        <a href="../pcb-design/" aria-current="page">PCB Design</a>
+        <a href="../repair-technician/">Repair Tech</a>
+        <a href="../contact/">Contact</a>
+    </nav>
+
+    <main class="page" id="main">
+
+        <header class="page-hero">
+            <p class="eyebrow">Hardware</p>
+            <h1>PCB Design &amp; Hardware</h1>
+            <p class="lede">From KiCad and EasyEDA schematic capture to routing dense boards for manufacture, Anton designs custom hardware built around one idea: electronic instruments that behave like instruments rather than interfaces.</p>
+        </header>
+
+        <!-- Learning curve -->
+        <section class="block">
+            <h2>Two Years, Fundamentals to Eight Layers</h2>
+            <p>Anton went from first principles to eight-layer stackup design in two years, while carrying a full-time course load at Berklee and working part time as a repair technician. There was no degree program behind it and no team to hand a layout off to — the path ran from Ohm's law and passive components to schematic capture, then to two-layer boards, then to controlled-impedance routing and dense multilayer stackups with the constraints that come with them.</p>
+            <p>Working the repair bench through the same period shortened the loop considerably. Diagnosing failures in production hardware at the component level teaches you which design decisions survive contact with the real world and which ones show up later as a board that cannot be serviced, and that feedback went straight back into how he lays out his own work.</p>
+            <ul class="stack">
+                <li><strong>Schematic capture</strong><span>KiCad and EasyEDA, from block diagram through netlist and ERC.</span></li>
+                <li><strong>Multilayer routing</strong><span>Two-layer boards through eight-layer stackups, with plane and return-path planning.</span></li>
+                <li><strong>Signal integrity</strong><span>Controlled impedance, ground reference continuity, and decoupling strategy.</span></li>
+                <li><strong>Design for manufacture</strong><span>Fabrication and assembly constraints, footprints, and serviceable layout.</span></li>
+            </ul>
+        </section>
+
+        <!-- Instruments -->
+        <section class="block">
+            <h2>Custom Electronic Instruments</h2>
+            <p>The design work centers on instruments. The Tonnetz Grid MIDI controller is the largest of them: a multi-layered board built around overlapping 12x8 FSR matrices with integrated SK6812 addressable LEDs, laying the harmonic lattice out as something you can actually play with your hands. Alongside it sit compact matrixed macro keyboards built on ESP32-S2 microcontrollers.</p>
+            <p>Pressure sensing at that density is the hard part. Overlapping FSR matrices mean scanning without ghosting, keeping analog reads clean while addressable LEDs switch underneath them, and holding the whole thing to a mechanical stackup that still feels good under the fingers.</p>
+        </section>
+
+        <!-- Gallery -->
+        <section class="block">
+            <h2>Bench and Boards</h2>
+            <p class="block-sub">Fabrication and bring-up</p>
+            <div class="carousel" data-carousel>
+                <div class="carousel-viewport" aria-label="Hardware photographs">
+                    <ul class="carousel-track">
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="pcbdesignCONT/IMG_1252.jpg" alt="Populated circuit board with ribbon cables under bring-up on the bench, beside a large copper trace matrix panel" loading="lazy" decoding="async">
+                                <figcaption>Board bring-up on the bench, with the copper trace matrix panel in the foreground</figcaption>
+                            </figure>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="page-footer">
+        <img class="mark" src="../mainpageIMG/RZVsymbolONLY.png" alt="">
+        <p><a href="../">Back to all work</a></p>
+    </footer>
+
+    <script src="../gallery.js"></script>
+</body>
+</html>
