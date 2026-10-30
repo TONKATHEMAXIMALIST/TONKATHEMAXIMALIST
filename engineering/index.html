@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering | Anthony Rizvanov</title>
+    <meta name="description" content="Hardware design, prototyping and test documentation by Anthony Rizvanov: two original MIDI instruments from breadboard to multi-board KiCad design, and a component characterization report.">
+    <link rel="stylesheet" href="../pagestyle.css">
+    <link rel="stylesheet" href="../engineering/engineering.css">
+</head>
+<body>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <nav>
+        <a href="../engineering/" aria-current="page">Engineering</a>
+        <a href="../engineering/tini/">TINI</a>
+        <a href="../engineering/tims/">TIMS</a>
+        <a href="../engineering/switch-report/">Switch Report</a>
+        <a href="../repair-technician/">Repair Tech</a>
+        <a href="../contact/">Contact</a>
+        <a href="../">All Work</a>
+    </nav>
+
+    <main class="page" id="main">
+
+        <header class="page-hero">
+            <p class="eyebrow">Engineering</p>
+            <h1>Hardware Design &amp; Test</h1>
+            <p class="lede">I'm Anthony Rizvanov, a repair technician and self-taught hardware designer in Boston. I've been building electronics since July 2024: two original MIDI instruments, each taken from breadboard prototypes to a multi-board PCB design in KiCad, with every prototype stage documented, including the ones that failed.</p>
+            <figure class="hero-figure figure">
+                <img src="media/tini-motherboard-3d.jpg" alt="3D view of the TINI motherboard in KiCad, with the power board drafted beside it" decoding="async">
+                <figcaption>TINI motherboard in KiCad: 8 copper layers, STM32G474, in final routing. Not yet fabricated.</figcaption>
+            </figure>
+        </header>
+
+        <section class="block">
+            <h2>Where Things Stand</h2>
+            <p class="block-sub">October 2026</p>
+            <div class="table-wrap">
+                <table class="spec-table">
+                    <thead><tr><th>Project</th><th>Built and tested</th><th>In design</th></tr></thead>
+                    <tbody>
+                        <tr><td>TINI</td><td>12 physical prototype stages, Jun 2025 to Mar 2026. Four worked: two switch grids that played MIDI into Logic Pro, a Velostat pressure grid on a breadboard, and a hand-etched pressure grid that drew a live heatmap.</td><td>Four-board 36 &times; 24 professional version in KiCad. The 8-layer motherboard is in final routing and the 6-layer, 288-cell sensor plate is laid out. Nothing fabricated yet.</td></tr>
+                        <tr><td>TIMS</td><td>9 prototype stages, Jul 2024 to Feb 2026. Three worked, including a breath-controlled prototype that played melodies with double-tongued articulation.</td><td>Four-board professional version around a Teensy 4.1: netlists and BOM complete, schematics complete for three of the four boards. Not fabricated.</td></tr>
+                        <tr><td>Switch report</td><td>Component characterization of an undocumented 5-pin switch for the TIMS control panel.</td><td>&mdash;</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="block">
+            <h2>Projects</h2>
+            <div class="blurb-grid">
+                <div class="blurb-card">
+                    <h3>TINI</h3>
+                    <p class="card-sub">Tonal Intervallic Net Instrument</p>
+                    <p>A pressure-sensitive grid instrument laid out as a Tonnetz, so chords and scales become shapes under the hand. The professional version interleaves three complete Tonnetz grids in one 288-cell play surface.</p>
+                    <a class="text-link card-link" href="tini/">TINI documentation</a>
+                </div>
+                <div class="blurb-card">
+                    <h3>TIMS</h3>
+                    <p class="card-sub">Trumpet Instrument: MIDI Synthesizer</p>
+                    <p>A MIDI instrument that plays like a trumpet: breath sets the dynamics, three valves transpose and the lips choose the partial. Built by a working jazz trumpeter for players like him.</p>
+                    <a class="text-link card-link" href="tims/">TIMS documentation</a>
+                </div>
+                <div class="blurb-card">
+                    <h3>Switch Report</h3>
+                    <p class="card-sub">Component characterization &middot; CCR-001</p>
+                    <p>A 5-pin switch arrived with no datasheet. I mapped its pins and measured contact and isolation resistance against pass criteria set before testing, then wired the control panel to the result.</p>
+                    <a class="text-link card-link" href="switch-report/">Read the report</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="block">
+            <h2>How I Work</h2>
+            <p>My day job is repair. At CPR Cell Phone Repair in Boston I diagnose and repair phones, tablets, laptops and consoles, and I run the store's parts inventory, purchasing and vendor returns. On my own time I do board-level repair and data recovery. Seeing which designs fail on the bench, and which ones can't be serviced, shapes how I lay out my own boards: the TINI power stage is moving to its own board partly so it can be repaired on its own, and the trumpet is split into four boards partly for the same reason.</p>
+            <p>I keep the whole record. Every prototype stage on these pages lists what it tested, whether it worked, and what I changed next. Most of them failed, and the failures are where the design decisions came from.</p>
+            <ul class="stack">
+                <li><strong>PCB design</strong><span>KiCad and EasyEDA: schematic capture, netlists and ERC, multilayer layout from 2 to 8 layers, multi-board partitioning, BOM development.</span></li>
+                <li><strong>Prototyping</strong><span>Raspberry Pi 5 with Python, Adafruit Grand Central M4, ESP32-S2, hand-etched two-sided boards with UV-cured solder mask, Velostat pressure sensing, MIDI.</span></li>
+                <li><strong>Bench and test</strong><span>Multimeter diagnostics, power-rail tracing against schematics, microsoldering, hot-air rework, BGA reballing, written component characterization.</span></li>
+            </ul>
+        </section>
+
+        <section class="block">
+            <h2>Next: First Board Order</h2>
+            <p>The TINI motherboard and power board will go out as a first article, together with a small test board carrying a few sensor cells, before the large sensor plate is ordered. The bring-up plan, its pass/fail checks and the results will be published on the <a class="text-link" href="tini/">TINI page</a>.</p>
+        </section>
+
+        <section class="block">
+            <h2>Repair Work</h2>
+            <p>Five-plus years of device repair, from module-level work at a mall kiosk to board-level diagnosis and data recovery. Apple Certified Repair Technician (ACRT 300) and Samsung WISE Level 1. <a class="text-link" href="../repair-technician/">See the repair page</a>.</p>
+        </section>
+
+    </main>
+
+    <footer class="page-footer">
+        <img class="mark" src="../mainpageIMG/RZVsymbolONLY.png" alt="">
+        <p><a href="../engineering/">Engineering home</a> &nbsp;&middot;&nbsp; <a href="../">All work</a></p>
+    </footer>
+
+    <script src="../engineering/videos.js"></script>
+    <script src="../engineering/engineering.js"></script>
+</body>
+</html>
