@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TINI: Tonal Intervallic Net Instrument | Anthony Rizvanov</title>
+    <meta name="description" content="TINI, a pressure-sensitive Tonnetz grid MIDI instrument: three interleaved Tonnetz grids in one 288-cell surface, twelve documented prototype stages, and a four-board professional design in KiCad.">
+    <link rel="stylesheet" href="../../pagestyle.css">
+    <link rel="stylesheet" href="../../engineering/engineering.css">
+</head>
+<body>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <nav>
+        <a href="../../engineering/">Engineering</a>
+        <a href="../../engineering/tini/" aria-current="page">TINI</a>
+        <a href="../../engineering/tims/">TIMS</a>
+        <a href="../../engineering/switch-report/">Switch Report</a>
+        <a href="../../repair-technician/">Repair Tech</a>
+        <a href="../../contact/">Contact</a>
+        <a href="../../">All Work</a>
+    </nav>
+
+    <main class="page" id="main">
+
+        <header class="page-hero">
+            <p class="eyebrow">Project &middot; May 2025 &ndash; present</p>
+            <h1>TINI: Tonal Intervallic Net Instrument</h1>
+            <p class="lede">A grid instrument laid out as a Tonnetz. Each cell is a note and each direction on the grid is a fixed interval, so a chord or a scale is a shape you can hold under your fingers. I've built and played twelve physical prototypes; the professional version is in design in KiCad.</p>
+            <p class="status-strip"><b>Status:</b> 12 prototype stages built, 4 worked. Professional 36 &times; 24 version in design. Nothing fabricated yet.</p>
+        </header>
+
+        <section class="block">
+            <h2>Three Tonnetz Grids in One Surface</h2>
+            <p class="block-sub">The idea the instrument is built around</p>
+            <p>A Tonnetz is a lattice of notes first sketched by Leonhard Euler in 1739. On TINI every grid follows the same three rules:</p>
+            <ul class="plain-list">
+                <li><b>Up</b> is a perfect 5th, and down is a perfect 5th lower.</li>
+                <li><b>Up and to the right</b> is a major 3rd; down and to the left reverses it.</li>
+                <li><b>Up and to the left</b> is a minor 3rd; down and to the right reverses it.</li>
+            </ul>
+            <p>A major 3rd plus a minor 3rd makes a perfect 5th, so the moves close into triangles: a note with its up-right and up neighbors is a major triad (C, E, G), and a note with its up-left and up neighbors is a minor triad (C, E&flat;, G). A chord has the same shape in every key, so a progression becomes a path of shapes under the hand.</p>
+            <p>The professional play surface interleaves three of these grids, each 12 &times; 8 cells, told apart by pad shape: Primary (large round), Secondary (smaller round) and Tertiary (a dumbbell, where both ends and the bar are one note). Each grid on its own is a complete Tonnetz. They differ only by transposition: in the default setting the Secondary grid sits a major 9th above the Primary, so one step to the right of a Primary cell plays a 9th higher, and the Tertiary grid sits a whole step above the Primary. The transposition interval will be user-configurable. Three grids of 96 cells give 288 notes under the hand.</p>
+            <figure class="figure">
+                <img src="../media/tini-note-map.png" alt="Note map of one region of the play surface showing Primary, Secondary and Tertiary cells" loading="lazy" decoding="async">
+                <figcaption>Note map for one region of the surface. Purple: Primary grid. Blue circles: Secondary, a major 9th above. Green dumbbells: Tertiary, a whole step above; only one end of each dumbbell is labeled so the grid is easier to read.</figcaption>
+            </figure>
+            <div class="carousel contain" data-carousel>
+                <div class="carousel-viewport" aria-label="Sensor plate layout">
+                    <ul class="carousel-track">
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/tini-primary-cells.jpg" alt="KiCad sensor plate with the Primary cells circled in blue" loading="lazy" decoding="async">
+                                <figcaption>Primary cells (blue) in the KiCad sensor-plate layout. Each round pad is an interdigitated pressure cell with an LED in the center.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/tini-secondary-cells.jpg" alt="KiCad sensor plate with the Secondary cells circled in red" loading="lazy" decoding="async">
+                                <figcaption>Secondary cells (red): the smaller round pads.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/tini-tertiary-cells.jpg" alt="KiCad sensor plate with the Tertiary dumbbell cells circled in yellow" loading="lazy" decoding="async">
+                                <figcaption>Tertiary cells (yellow): the dumbbells, one note per dumbbell.</figcaption>
+                            </figure>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="block">
+            <h2>Reading 288 Cells</h2>
+            <p>The 36 &times; 24 lattice is the instrument's note layout. Electrically, the 24 rows are grouped in threes, so only 8 row lines have to be driven, and each of the 36 columns is read on its own: 36 sense channels &times; 8 row drives gives 288 readings per scan. 96 addressable RGB LEDs sit in the Primary cells.</p>
+            <div class="figure-pair">
+                <figure class="figure">
+                    <img src="../media/tini-scan-columns.png" alt="Diagram of the 36 columns read one at a time" loading="lazy" decoding="async">
+                    <figcaption>Columns are read one by one: 36 in all.</figcaption>
+                </figure>
+                <figure class="figure">
+                    <img src="../media/tini-scan-rows.png" alt="Diagram of the 24 rows grouped into 8 driven lines" loading="lazy" decoding="async">
+                    <figcaption>Rows are grouped in threes, so 8 lines are driven instead of 24.</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section class="block">
+            <h2>Prototype History</h2>
+            <p class="block-sub">Listed by date &middot; stage numbers are my own</p>
+            <p>Twelve physical stages in ten months, from single buttons to a pressure grid on hand-etched boards. Each one is listed with what it tested and what changed next.</p>
+            <ol class="timeline">
+            <li class="stage">
+                <div><span class="stage-num">00</span><span class="stage-date">Jun 2025</span></div>
+                <div>
+                    <h3>Single button and LED cell</h3>
+                    <span class="tag ">Failed</span>
+                    <p>The first single-cell button and LED units, built to learn how one note cell should work before building a grid.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">02</span><span class="stage-date">Jun 2025</span></div>
+                <div>
+                    <h3>First large push-button board</h3>
+                    <span class="tag ">Failed</span>
+                    <p>A 6 &times; 4 and 7 &times; 4 push-button LED board, the first attempt at a full playing surface.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">03</span><span class="stage-date">Jun 2025</span></div>
+                <div>
+                    <h3>Push-button board on I&sup2;C expanders</h3>
+                    <span class="tag ">Failed</span>
+                    <p>The same layout read through MCP23017 I&sup2;C port expanders. An I&sup2;C scan found no devices on the bus, so the next build wired the grid straight to the microcontroller.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">05</span><span class="stage-date">Jun &ndash; Jul 2025</span></div>
+                <div>
+                    <h3>8 &times; 7 push-button grid in wood columns</h3>
+                    <span class="tag success">Worked</span>
+                    <p>Push buttons mounted in wood columns, wired directly to an Adafruit Grand Central M4, with an LED board and a breath-pressure sensor module. Presses played notes into Logic Pro over MIDI.</p>
+                    <p>What changed next: the push buttons felt robotic to play.</p>
+            <div class="video-grid">
+                <figure class="video" data-code="T1" data-title="TINI Stage 05: 8x7 Button Grid Play Test (July 2025)">
+                    <figcaption>Play test, July 2025.</figcaption>
+                </figure>
+                <figure class="video" data-code="T2" data-title="TINI Stage 05: 8x7 Full Build Walk-Around (July 2025)">
+                    <figcaption>Walk-around of the full build.</figcaption>
+                </figure>
+            </div>
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">01</span><span class="stage-date">Aug 2025</span></div>
+                <div>
+                    <h3>Mini Tonnetz board</h3>
+                    <span class="tag ">Failed</span>
+                    <p>A small Tonnetz board, routed on the back before and after mounting to wood.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">04</span><span class="stage-date">Sep &ndash; Oct 2025</span></div>
+                <div>
+                    <h3>9 &times; 11 grid in a 3D-printed housing</h3>
+                    <span class="tag ">Gave up</span>
+                    <p>A 9 &times; 11 push-button grid in a housing I designed in TinkerCAD, with auxiliary potentiometers, a 4 &times; 4 beat pad, a sustain-pedal input and a board-to-controller cable converter.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">06</span><span class="stage-date">Oct &ndash; Nov 2025</span></div>
+                <div>
+                    <h3>Keyboard-switch grid on a motherboard</h3>
+                    <span class="tag success">Worked</span>
+                    <p>A mechanical keyboard-switch matrix stacked on a motherboard, a 74HC595 protoboard to drive the LEDs, and the Grand Central M4. Every note played into Logic Pro in every direction of the grid.</p>
+                    <p>Why keyboard switches: a keyboard switch sounds the note only when the key bottoms out, the way a piano hammer reaches the string. What changed next: I wanted each note to carry velocity.</p>
+            <div class="video-grid">
+                <figure class="video" data-code="T3" data-title="TINI Stage 06: Keyboard Switch Grid: Tonal Net Walkthrough">
+                    <figcaption>Play test running through every note in every direction, November 2025.</figcaption>
+                </figure>
+                <figure class="video" data-code="T4" data-title="TINI Stage 06: Keyboard Switch Grid: 2nd Player Test">
+                    <figcaption>The same build played by a second player.</figcaption>
+                </figure>
+            </div>
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">07</span><span class="stage-date">Dec 2025 &ndash; Jan 2026</span></div>
+                <div>
+                    <h3>Velostat pressure mat with LEDs</h3>
+                    <span class="tag ">Failed</span>
+                    <p>A Velostat pressure mat with addressable LEDs poked through it, the first attempt to put pressure sensing and lighting in one surface.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">08</span><span class="stage-date">Dec 2025</span></div>
+                <div>
+                    <h3>Pressure-matrix automation tool</h3>
+                    <span class="tag ">Gave up</span>
+                    <p>Copper tape on a wood substrate, read through CD74HC4067 multiplexers and 74HC138 decoders, as a pressure-sensitive controller for recording DAW automation.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">10</span><span class="stage-date">Dec 2025</span></div>
+                <div>
+                    <h3>8 &times; 8 Velostat grid on a breadboard</h3>
+                    <span class="tag success">Worked</span>
+                    <p>The first working pressure prototype: an 8 &times; 8 Velostat grid on wood with transistor-driven rows on a breadboard, connected to the computer and powered on.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">09</span><span class="stage-date">Jan 2026</span></div>
+                <div>
+                    <h3>Capacitive-touch wood casing</h3>
+                    <span class="tag ">Failed</span>
+                    <p>A hinged wood frame that opens to show the electronics, with CD4067 breakout boards, power rails and an early TIMS module mounted inside. The capacitive-touch surface didn't work: I couldn't work out the pull-resistor values it needed. Pressure sensing also gives each note velocity, so a harder press plays louder, and the next builds went back to pressure.</p>
+            <div class="video-grid">
+                <figure class="video" data-code="T5" data-title="TINI Stage 09: Capacitive Touch Frame: Power On (January 2026)">
+                    <figcaption>Power-on of the capacitive-touch build, with the trumpet module running, January 2026.</figcaption>
+                </figure>
+            </div>
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">AA</span><span class="stage-date">Feb 2026</span></div>
+                <div>
+                    <h3>Learning: board etching and FSR mechanics</h3>
+                    <span class="tag ">Learning</span>
+                    <p>Etched 74HC595 and CD74HC4067 daisy-chain boards in ferric chloride, and etched a single force-sensing cell to see how it behaves before and after.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">11</span><span class="stage-date">Feb &ndash; Mar 2026</span></div>
+                <div>
+                    <h3>Pressure grid on hand-etched boards</h3>
+                    <span class="tag partial">Worked in concept</span>
+                    <p>A Velostat and copper-strip pressure surface over hand-etched two-sided boards: CD74HC4067 multiplexers on the columns, 74HC595 shift registers on the rows, a switchable resistor array to try different divider values, 16 hand-made top-to-bottom vias and UV-cured solder mask, read by a Raspberry Pi 5 with an LCD. Presses showed up on a live heatmap. The full-size build wasn't finished; the design moved to PCBs instead.</p>
+            <div class="video-grid">
+                <figure class="video" data-code="T6" data-title="TINI Stage 11: Velostat Grid, Live Pressure Sensor Heatmap (February 2026)">
+                    <figcaption>Presses on the grid lighting up a live heatmap, February 2026.</figcaption>
+                </figure>
+                <figure class="video" data-code="T7" data-title="TINI Stage 11: Hand-Etched Board, Soldering Time-Lapse">
+                    <figcaption>Soldering the hand-etched board, time-lapse.</figcaption>
+                </figure>
+            </div>
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">12</span><span class="stage-date">May &ndash; Jun 2026</span></div>
+                <div>
+                    <h3>First PCB routing attempts</h3>
+                    <span class="tag ">Discontinued</span>
+                    <p>A single 12 &times; 8 board, a 64 &times; 32 base-board concept and routing for the 36 &times; 24 play-surface connectors. Sensors, microcontroller and power on one board left too little routing room, so the design split into four boards.</p>
+
+                </div>
+            </li>
+            <li class="stage">
+                <div><span class="stage-num">13</span><span class="stage-date">Jun 2026 &ndash; now</span></div>
+                <div>
+                    <h3>Professional 36 &times; 24 version</h3>
+                    <span class="tag design">In design</span>
+                    <p>The four-board professional instrument below, in KiCad.</p>
+
+                </div>
+            </li>
+            </ol>
+            <div class="carousel" data-carousel>
+                <div class="carousel-viewport" aria-label="TINI prototype photographs">
+                    <ul class="carousel-track">
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-05-front.jpg" alt="Stage 05 push-button grid in wood columns, front view" loading="lazy" decoding="async">
+                                <figcaption>Stage 05: the 8 &times; 7 push-button grid in wood columns.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-05-wiring.jpg" alt="Back of the stage 05 control board showing point-to-point wiring" loading="lazy" decoding="async">
+                                <figcaption>Stage 05: control board wiring, back side.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-04-housing.jpg" alt="Stage 04 3D-printed housing on top of the play surface" loading="lazy" decoding="async">
+                                <figcaption>Stage 04: the 3D-printed housing, checked against the play surface.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-06-full-build.jpg" alt="Stage 06 keyboard-switch grid, full build from above, powered on" loading="lazy" decoding="async">
+                                <figcaption>Stage 06: the keyboard-switch build, powered on.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-06-switch-matrix.jpg" alt="Underside of the stage 06 keyboard-switch matrix mid-assembly" loading="lazy" decoding="async">
+                                <figcaption>Stage 06: switch matrix wiring mid-assembly.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-10-velostat-breadboard.jpg" alt="Stage 10 8 by 8 Velostat grid with transistor-driven rows on a breadboard" loading="lazy" decoding="async">
+                                <figcaption>Stage 10: the first working pressure grid, on a breadboard.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-09-wood-frame.jpg" alt="Stage 09 hinged wood frame opened to show the electronics" loading="lazy" decoding="async">
+                                <figcaption>Stage 09: the hinged wood frame, opened.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-11-etched-topside.jpg" alt="Hand-etched two-sided board with multiplexers and shift registers" loading="lazy" decoding="async">
+                                <figcaption>Stage 11: hand-etched board, multiplexers on the columns and shift registers on the rows.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../media/photos/tini-11-uv-cure.jpg" alt="Hand-etched board under UV light curing the solder mask" loading="lazy" decoding="async">
+                                <figcaption>Stage 11: curing the solder mask under UV.</figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel-slide">
+                            <figure>
+                                <img src="../../pcb-design/pcbdesignCONT/IMG_1252.jpg" alt="Stage 11 pressure grid on the bench with the Raspberry Pi and etched boards" loading="lazy" decoding="async">
+                                <figcaption>Stage 11: the pressure grid on the bench, with the etched boards and Raspberry Pi behind it.</figcaption>
+                            </figure>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="block">
+            <h2>Professional Version: Four Boards</h2>
+            <p class="block-sub">36 &times; 24 &middot; in design in KiCad &middot; not fabricated</p>
+            <div class="table-wrap">
+                <table class="spec-table">
+                    <thead><tr><th>Board</th><th>What it is</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>C &middot; Motherboard</td><td>8 copper layers, 250 &times; 155 mm. STM32G474 microcontroller reading 36 analog sense channels; USB-C, 5-pin DIN MIDI, sustain-pedal jack, rotary encoder and a debug header.</td><td>Schematic complete. Layout in final routing.</td></tr>
+                        <tr><td>B &middot; Sensor plate</td><td>6 copper layers, 400 &times; 380 mm. 288 custom interdigitated pressure cells in three interleaved 12 &times; 8 grids, and 96 reverse-mount SK6812 RGB LEDs.</td><td>Schematic complete. Layout drawn; design-rule check not yet run.</td></tr>
+                        <tr><td>A &middot; Power</td><td>12 V input stage with protection and a buck converter.</td><td>Drafted inside the motherboard file; being split into its own board.</td></tr>
+                        <tr><td>D &middot; Auxiliary</td><td>Peripheral sub-board; its connector is already placed on the motherboard.</td><td>Not started.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="figure-pair">
+                <figure class="figure">
+                    <img src="../media/tini-motherboard-3d.jpg" alt="3D view of the TINI motherboard and the drafted power board" loading="lazy" decoding="async">
+                    <figcaption>Motherboard 3D view, with the power board drafted alongside it (upper right) until it moves to its own project.</figcaption>
+                </figure>
+                <figure class="figure">
+                    <img src="../media/tini-motherboard-layout.jpg" alt="KiCad copper layout of the TINI motherboard with all layers shown" loading="lazy" decoding="async">
+                    <figcaption>Copper layout, all layers shown. Final routing in progress.</figcaption>
+                </figure>
+            </div>
+            <p>TINI is planned as a product line for different players and price points: an 8 &times; 8 educational grid, a 16 &times; 24 intermediate version and this 36 &times; 24 professional instrument.</p>
+        </section>
+
+        <section class="block">
+            <h2>Design Decisions</h2>
+            <ul class="plain-list">
+                <li><b>I&sup2;C expanders to direct wiring.</b> The MCP23017 chain in stage 03 never showed up on the bus, so stage 05 wired the grid straight to the microcontroller.</li>
+                <li><b>Push buttons to keyboard switches.</b> Push buttons felt robotic. A keyboard switch sounds the note only when the key bottoms out, like a piano hammer reaching the string.</li>
+                <li><b>Capacitive touch to pressure sensing.</b> Pressure gives every note velocity, so a harder press plays louder.</li>
+                <li><b>One board to four.</b> Sensors, microcontroller and power on one board left too little routing room.</li>
+                <li><b>ESP32-S3 to STM32G474.</b> Keeping the ESP32 had started to force cuts to the requirements. The STM32 has far more inputs, more speed and room for onboard audio synthesis.</li>
+                <li><b>Power on its own board.</b> It frees routing space on the motherboard, keeps power-stage noise away from the sensing circuits, and makes the power stage repairable on its own.</li>
+            </ul>
+        </section>
+
+        <section class="block">
+            <h2>Next: First Article and Bring-Up</h2>
+            <p>Before anything is ordered: finish routing, bring the design-rule and electrical-rule checks to zero errors, and check the boards against the fabricator's manufacturing rules. The first order will be the motherboard and power board, plus a small test board with a few sensor cells, so the cell design is proven before the 400 &times; 380 mm sensor plate is ordered. The bring-up plan, its pass/fail checks and the results will be posted here.</p>
+        </section>
+
+    </main>
+
+    <footer class="page-footer">
+        <img class="mark" src="../../mainpageIMG/RZVsymbolONLY.png" alt="">
+        <p><a href="../../engineering/">Engineering home</a> &nbsp;&middot;&nbsp; <a href="../../">All work</a></p>
+    </footer>
+
+    <script src="../../gallery.js"></script>
+    <script src="../../engineering/videos.js"></script>
+    <script src="../../engineering/engineering.js"></script>
+</body>
+</html>
