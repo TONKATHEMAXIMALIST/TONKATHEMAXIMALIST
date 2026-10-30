@@ -2,56 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PCB Design &amp; Hardware | Anton Fanisovich Rizvanov</title>
     <meta name="description" content="Custom PCB design and electronic instrument hardware, from two-layer boards to eight-layer stackups, by Anton Fanisovich Rizvanov.">
+    <meta name="theme-color" content="#000000">
+    <link rel="canonical" href="https://www.rizvanovcreation.com/about-me/pcb-design/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PCB Design &amp; Hardware | Anton Fanisovich Rizvanov">
+    <meta property="og:description" content="Custom PCB design and electronic instrument hardware, from two-layer boards to eight-layer stackups, by Anton Fanisovich Rizvanov.">
+    <meta property="og:url" content="https://www.rizvanovcreation.com/about-me/pcb-design/">
+    <meta property="og:image" content="https://www.rizvanovcreation.com/about-me/mainpageIMG/RZVsymbolONLY.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="../mainpageIMG/RZVsymbolONLY.png">
+    <link rel="preload" href="../fonts/bodoni-moda.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="../fonts/ibm-plex-sans.woff" as="font" type="font/woff" crossorigin>
     <link rel="stylesheet" href="../pagestyle.css">
-    <style>
-        .stack {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 22px;
-            margin: 0 0 40px;
-            padding: 0;
-            list-style: none;
-        }
-        .stack li {
-            border: 1px solid var(--hairline);
-            border-radius: 4px;
-            padding: 26px 24px;
-            background: var(--bg-raised);
-        }
-        .stack strong {
-            display: block;
-            color: var(--accent-gold);
-            font-weight: 400;
-            font-size: 1.2rem;
-            letter-spacing: 1.5px;
-            margin-bottom: 10px;
-        }
-        .stack span {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.6;
-        }
-    </style>
 </head>
 <body>
 
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <nav>
-        <a href="../">Home</a>
-        <a href="../jazz-trumpet/">Jazz Trumpet</a>
-        <a href="../music-production/">Music Production</a>
-        <a href="../classical/">Classical</a>
-        <a href="../jewelry-design/">Jewelry</a>
-        <a href="../pcb-design/" aria-current="page">PCB Design</a>
-        <a href="../repair-technician/">Repair Tech</a>
-        <a href="../contact/">Contact</a>
-    </nav>
+    <header class="site-header">
+        <div class="bar">
+            <a class="wordmark" href="../"><img src="../mainpageIMG/RZVsymbolONLY.png" alt="" width="30" height="32">Anton Rizvanov</a>
+            <a class="nav-feature lead" href="../../engineering/">Engineering portfolio</a>
+            <span class="nav-sep" aria-hidden="true"></span>
+            <nav class="site-nav" aria-label="Sections">
+            <a href="../jazz-trumpet/">Jazz trumpet</a>
+            <a href="../music-production/">Music production</a>
+            <a href="../classical/">Classical</a>
+            <a href="../jewelry-design/">Jewelry</a>
+            <a href="../pcb-design/" aria-current="page">PCB design</a>
+            <a href="../repair-technician/">Repair</a>
+            <a href="../contact/">Contact</a>
+            </nav>
+        </div>
+    </header>
 
-    <main class="page" id="main">
+        <main class="page" id="main">
 
         <header class="page-hero">
             <p class="eyebrow">Hardware</p>
@@ -97,11 +85,24 @@
             </div>
         </section>
 
+        <section class="block">
+            <h2>Engineering Portfolio</h2>
+            <p>Prototype histories, board designs and test reports for both instruments, TINI and TIMS, are documented stage by stage in the engineering portfolio.</p>
+            <a class="button ghost" href="../../engineering/">Open the engineering portfolio</a>
+        </section>
+
     </main>
 
     <footer class="page-footer">
-        <img class="mark" src="../mainpageIMG/RZVsymbolONLY.png" alt="">
-        <p><a href="../">Back to all work</a></p>
+        <div class="bar">
+            <img class="mark" src="../mainpageIMG/RZVsymbolONLY.png" alt="" width="40" height="43">
+            <p>&copy; 2026 Anton Fanisovich Rizvanov</p>
+            <nav aria-label="Footer">
+                <a href="../../engineering/">Engineering portfolio</a>
+                <a href="../">All work</a>
+                <a href="../contact/">Contact</a>
+            </nav>
+        </div>
     </footer>
 
     <script src="../gallery.js"></script>

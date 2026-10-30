@@ -36,3 +36,16 @@
         fig.insertBefore(frame, fig.firstChild);
     });
 })();
+
+/* Label table cells with their column heading so tables can stack on phones. */
+(function () {
+    "use strict";
+    Array.prototype.forEach.call(document.querySelectorAll(".spec-table"), function (table) {
+        var heads = Array.prototype.map.call(table.querySelectorAll("thead th"), function (th) { return th.textContent.trim(); });
+        if (!heads.length) return;
+        Array.prototype.forEach.call(table.querySelectorAll("tbody tr"), function (tr) {
+            Array.prototype.forEach.call(tr.children, function (td, i) { if (heads[i]) td.setAttribute("data-label", heads[i]); });
+        });
+        table.classList.add("stacked");
+    });
+})();

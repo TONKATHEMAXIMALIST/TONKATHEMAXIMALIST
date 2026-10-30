@@ -2,31 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Switch Characterization Report | Anthony Rizvanov</title>
     <meta name="description" content="Component characterization report CCR-001: pin map, contact resistance and isolation of an unmarked 5-pin momentary flick switch for the TIMS control panel. Result: pass, 6 of 6 criteria.">
-    <link rel="stylesheet" href="../../pagestyle.css">
-    <link rel="stylesheet" href="../../engineering/engineering.css">
+    <meta name="theme-color" content="#000000">
+    <link rel="canonical" href="https://www.rizvanovcreation.com/engineering/switch-report/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Switch Characterization Report | Anthony Rizvanov">
+    <meta property="og:description" content="Component characterization report CCR-001: pin map, contact resistance and isolation of an unmarked 5-pin momentary flick switch for the TIMS control panel. Result: pass, 6 of 6 criteria.">
+    <meta property="og:url" content="https://www.rizvanovcreation.com/engineering/switch-report/">
+    <meta property="og:image" content="https://www.rizvanovcreation.com/engineering/media/tini-motherboard-hero.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="../../about-me/mainpageIMG/RZVsymbolONLY.png">
+    <link rel="preload" href="../../about-me/fonts/bodoni-moda.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="../../about-me/fonts/ibm-plex-sans.woff" as="font" type="font/woff" crossorigin>
+    <link rel="stylesheet" href="../../about-me/pagestyle.css">
+    <link rel="stylesheet" href="../engineering.css">
 </head>
 <body>
 
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <nav>
-        <a href="../../engineering/">Engineering</a>
-        <a href="../../engineering/tini/">TINI</a>
-        <a href="../../engineering/tims/">TIMS</a>
-        <a href="../../engineering/switch-report/" aria-current="page">Switch Report</a>
-        <a href="../../repair-technician/">Repair Tech</a>
-        <a href="../../contact/">Contact</a>
-        <a href="../../">All Work</a>
-    </nav>
+    <header class="site-header">
+        <div class="bar">
+            <a class="wordmark" href="../"><img src="../../about-me/mainpageIMG/RZVsymbolONLY.png" alt="" width="30" height="32">Anthony Rizvanov</a>
+            <nav class="site-nav" aria-label="Engineering">
+            <a href="../">Overview</a>
+            <a href="../tini/">TINI</a>
+            <a href="../tims/">TIMS</a>
+            <a href="../switch-report/" aria-current="page">Switch report</a>
+            <a href="../#contact">Contact</a>
+            </nav>
+            <span class="nav-sep" aria-hidden="true"></span>
+            <a class="nav-feature" href="../../about-me/">Full portfolio</a>
+        </div>
+    </header>
 
-    <main class="page" id="main">
+        <main class="page" id="main">
 
         <header class="page-hero">
             <p class="eyebrow">Test report &middot; CCR-001 Rev A &middot; Oct 28, 2026</p>
-            <h1>Component Characterization: 5-Pin Flick Switch</h1>
+            <h1>Component Characterization: <span class="nowrap">5-Pin</span> Flick Switch</h1>
             <p class="lede">The TIMS control panel needed an octave switch, and the one I had was salvaged from a scrapped DVD/VCR player with no markings and no datasheet. Before designing around it, I measured which pins connect in each position, what the closed contacts add, and whether the open paths are isolated, against pass criteria set before testing.</p>
             <dl class="report-meta">
                 <dt>Part</dt><dd>5-pin miniature flick switch, momentary, center-off. No part number or markings.</dd>
@@ -86,12 +102,12 @@
                 <table class="spec-table">
                     <thead><tr><th>Criterion</th><th>Pass condition</th><th>Result</th></tr></thead>
                     <tbody>
-                        <tr><td>C1 &middot; Switching map</td><td>Same pin pairs on every repeat; one consistent switch type</td><td>PASS</td></tr>
-                        <tr><td>C2 &middot; Contact resistance</td><td>Below 1 &Omega; on every closed pair; three readings within one meter count</td><td>PASS</td></tr>
-                        <tr><td>C3 &middot; Isolation</td><td>Every open pair reads OL on the high resistance range</td><td>PASS</td></tr>
-                        <tr><td>C4 &middot; Body isolation</td><td>Body isolated from every pin, or bonded to one documented pin</td><td>PASS (plastic housing)</td></tr>
-                        <tr><td>C5 &middot; Return action</td><td>Each side returns to center on every release over 100 cycles</td><td>PASS</td></tr>
-                        <tr><td>C6 &middot; Stability</td><td>After 100 cycles per side, C2 still met; no new or missing connections</td><td>PASS</td></tr>
+                        <tr><td>C1 &middot; Switching map</td><td>Same pin pairs on every repeat; one consistent switch type</td><td class="pass">PASS</td></tr>
+                        <tr><td>C2 &middot; Contact resistance</td><td>Below 1 &Omega; on every closed pair; three readings within one meter count</td><td class="pass">PASS</td></tr>
+                        <tr><td>C3 &middot; Isolation</td><td>Every open pair reads OL on the high resistance range</td><td class="pass">PASS</td></tr>
+                        <tr><td>C4 &middot; Body isolation</td><td>Body isolated from every pin, or bonded to one documented pin</td><td class="pass">PASS (plastic housing)</td></tr>
+                        <tr><td>C5 &middot; Return action</td><td>Each side returns to center on every release over 100 cycles</td><td class="pass">PASS</td></tr>
+                        <tr><td>C6 &middot; Stability</td><td>After 100 cycles per side, C2 still met; no new or missing connections</td><td class="pass">PASS</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -144,15 +160,31 @@
             <p><a class="text-link" href="../tims/">Back to the TIMS documentation</a></p>
         </section>
 
+        <section class="block">
+            <h2>More Engineering Work</h2>
+            <nav class="next-pages" aria-label="More engineering work">
+                <a href="../tims/">TIMS<span>Where this switch is used</span></a>
+                <a href="../tini/">TINI<span>The Tonnetz grid instrument</span></a>
+                <a href="../">Overview<span>All engineering work</span></a>
+            </nav>
+        </section>
+
     </main>
 
     <footer class="page-footer">
-        <img class="mark" src="../../mainpageIMG/RZVsymbolONLY.png" alt="">
-        <p><a href="../../engineering/">Engineering home</a> &nbsp;&middot;&nbsp; <a href="../../">All work</a></p>
+        <div class="bar">
+            <img class="mark" src="../../about-me/mainpageIMG/RZVsymbolONLY.png" alt="" width="40" height="43">
+            <p>&copy; 2026 Anthony Rizvanov &nbsp;&nbsp;<a href="mailto:anthony@rizvanovcreation.com">anthony@rizvanovcreation.com</a></p>
+            <nav aria-label="Footer">
+                <a href="../">Engineering overview</a>
+                <a href="https://www.linkedin.com/in/anthony-rizvanov-bb935229b" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a href="../../about-me/">Full portfolio</a>
+            </nav>
+        </div>
     </footer>
 
-    <script src="../../gallery.js"></script>
-    <script src="../../engineering/videos.js"></script>
-    <script src="../../engineering/engineering.js"></script>
+    <script src="../../about-me/gallery.js"></script>
+    <script src="../videos.js"></script>
+    <script src="../engineering.js"></script>
 </body>
 </html>

@@ -2,31 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TIMS (Trumpet Instrument: MIDI Synthesizer) | Anthony Rizvanov</title>
     <meta name="description" content="TIMS (Trumpet Instrument: MIDI Synthesizer), a breath-controlled MIDI trumpet synthesizer: nine documented prototype stages since July 2024 and a four-board Teensy 4.1 professional design.">
-    <link rel="stylesheet" href="../../pagestyle.css">
-    <link rel="stylesheet" href="../../engineering/engineering.css">
+    <meta name="theme-color" content="#000000">
+    <link rel="canonical" href="https://www.rizvanovcreation.com/engineering/tims/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TIMS (Trumpet Instrument: MIDI Synthesizer) | Anthony Rizvanov">
+    <meta property="og:description" content="TIMS (Trumpet Instrument: MIDI Synthesizer), a breath-controlled MIDI trumpet synthesizer: nine documented prototype stages since July 2024 and a four-board Teensy 4.1 professional design.">
+    <meta property="og:url" content="https://www.rizvanovcreation.com/engineering/tims/">
+    <meta property="og:image" content="https://www.rizvanovcreation.com/engineering/media/tini-motherboard-hero.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="../../about-me/mainpageIMG/RZVsymbolONLY.png">
+    <link rel="preload" href="../../about-me/fonts/bodoni-moda.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="../../about-me/fonts/ibm-plex-sans.woff" as="font" type="font/woff" crossorigin>
+    <link rel="stylesheet" href="../../about-me/pagestyle.css">
+    <link rel="stylesheet" href="../engineering.css">
 </head>
 <body>
 
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <nav>
-        <a href="../../engineering/">Engineering</a>
-        <a href="../../engineering/tini/">TINI</a>
-        <a href="../../engineering/tims/" aria-current="page">TIMS</a>
-        <a href="../../engineering/switch-report/">Switch Report</a>
-        <a href="../../repair-technician/">Repair Tech</a>
-        <a href="../../contact/">Contact</a>
-        <a href="../../">All Work</a>
-    </nav>
+    <header class="site-header">
+        <div class="bar">
+            <a class="wordmark" href="../"><img src="../../about-me/mainpageIMG/RZVsymbolONLY.png" alt="" width="30" height="32">Anthony Rizvanov</a>
+            <nav class="site-nav" aria-label="Engineering">
+            <a href="../">Overview</a>
+            <a href="../tini/">TINI</a>
+            <a href="../tims/" aria-current="page">TIMS</a>
+            <a href="../switch-report/">Switch report</a>
+            <a href="../#contact">Contact</a>
+            </nav>
+            <span class="nav-sep" aria-hidden="true"></span>
+            <a class="nav-feature" href="../../about-me/">Full portfolio</a>
+        </div>
+    </header>
 
-    <main class="page" id="main">
+        <main class="page" id="main">
 
         <header class="page-hero">
             <p class="eyebrow">Project &middot; Jul 2024 &ndash; present</p>
-            <h1>TIMS</h1>
+            <h1 class="metal">TIMS</h1>
             <p class="hero-sub">Trumpet Instrument: MIDI Synthesizer</p>
             <p class="lede">A MIDI wind controller and standalone synthesizer meant to play like a real trumpet: breath sets the dynamics, three valves transpose and the lips choose the partial. I play jazz trumpet professionally, so the target is an instrument I would perform on.</p>
             <p class="status-strip"><b>Status:</b> 9 prototype stages built, 3 worked. Professional four-board version designed, not yet fabricated.</p>
@@ -184,12 +200,6 @@
                                 <figcaption>Stage 07: full prototype with the TFT display.</figcaption>
                             </figure>
                         </li>
-                        <li class="carousel-slide">
-                            <figure>
-                                <img src="../media/photos/trumpet-09-protoboard.jpg" alt="Stage 09 protoboard with capacitive-touch valves and breath sensor beside a pressure gauge" loading="lazy" decoding="async">
-                                <figcaption>Stage 09: protoboard with capacitive-touch valves and a breath sensor checked against a PSI gauge.</figcaption>
-                            </figure>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -223,15 +233,31 @@
             </ul>
         </section>
 
+        <section class="block">
+            <h2>More Engineering Work</h2>
+            <nav class="next-pages" aria-label="More engineering work">
+                <a href="../tini/">TINI<span>The Tonnetz grid instrument</span></a>
+                <a href="../switch-report/">Switch report<span>Component characterization</span></a>
+                <a href="../">Overview<span>All engineering work</span></a>
+            </nav>
+        </section>
+
     </main>
 
     <footer class="page-footer">
-        <img class="mark" src="../../mainpageIMG/RZVsymbolONLY.png" alt="">
-        <p><a href="../../engineering/">Engineering home</a> &nbsp;&middot;&nbsp; <a href="../../">All work</a></p>
+        <div class="bar">
+            <img class="mark" src="../../about-me/mainpageIMG/RZVsymbolONLY.png" alt="" width="40" height="43">
+            <p>&copy; 2026 Anthony Rizvanov &nbsp;&nbsp;<a href="mailto:anthony@rizvanovcreation.com">anthony@rizvanovcreation.com</a></p>
+            <nav aria-label="Footer">
+                <a href="../">Engineering overview</a>
+                <a href="https://www.linkedin.com/in/anthony-rizvanov-bb935229b" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a href="../../about-me/">Full portfolio</a>
+            </nav>
+        </div>
     </footer>
 
-    <script src="../../gallery.js"></script>
-    <script src="../../engineering/videos.js"></script>
-    <script src="../../engineering/engineering.js"></script>
+    <script src="../../about-me/gallery.js"></script>
+    <script src="../videos.js"></script>
+    <script src="../engineering.js"></script>
 </body>
 </html>
